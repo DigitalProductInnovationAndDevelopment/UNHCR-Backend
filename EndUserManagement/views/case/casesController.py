@@ -54,6 +54,7 @@ def casesController(request, **kwargs):
             queryset = Case.objects
 
             # Filter according to User ID
+            # TODO: For end users, before LIST operation, we need to check if the given User ID is the same with the ID of the logged in user
             if validatedData["User"] is not None:
                 queryset = queryset.filter(User = validatedData["User"])
 

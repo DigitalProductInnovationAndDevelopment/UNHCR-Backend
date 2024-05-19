@@ -64,7 +64,7 @@ def usersController(request, **kwargs):
             newUser = User(**validatedData)
             newUser.save()
             return Response(
-                {"success": True, "message": "The user has been created successfully."},
+                {"success": True, "message": translationService.translate('user.create.successful')},
                 status=status.HTTP_201_CREATED,
             )
 

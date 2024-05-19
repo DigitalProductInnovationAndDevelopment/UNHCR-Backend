@@ -2,6 +2,9 @@ class TranslationService:
     def __init__(self):
         self.translationMap = {
             "HTTP.method.invalid": {"en-us": "HTTP method is invalid."},
+            "case.not.exist": {"en-us": "The case does not exist."},
+            "case.update.successful": {"en-us": "The case has been successfully updated."},
+            "user.create.successful": {"en-us": "The user has been successfully created."},
             "": {"en-us": ""},
         }
 
