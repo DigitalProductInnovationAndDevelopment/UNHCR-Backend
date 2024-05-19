@@ -1,11 +1,13 @@
 import traceback
 import logging
+import json
 
 from EndUserManagement.models import User
 from EndUserManagement.services import (
     PaginationService,
     TranslationService,
 )
+from EndUserManagement.serializers.inputValidators import UserCreateValidator
 
 from rest_framework.response import Response
 from rest_framework import status
@@ -41,9 +43,30 @@ def usersController(request, **kwargs):
         """
         Creates a user.
         @Endpoint: /users
+        @BodyParam: Name (String, REQUIRED)
+        @BodyParam: Surname (String, REQUIRED)
+        @BodyParam: DateOfBirth (String (YYYY-MM-DD), OPTIONAL)
+        @BodyParam: PhoneNumber (String, OPTIONAL)
+        @BodyParam: Email (String, REQUIRED)
+        @BodyParam: Address (String, OPTIONAL)
         """
         try:
-            pass
+            requestBody = json.loads(request.body)
+            paramValidator = UserCreateValidator(data = requestBody)
+            isParamsValid = paramValidator.is_valid(raise_exception = False)
+            # The case for body param(s) not being as they should be
+            if not isParamsValid:
+                return Response(
+                    {"success": False, "message": str(paramValidator.errors)},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            validatedData = paramValidator.validated_data
+            newUser = User(**validatedData)
+            newUser.save()
+            return Response(
+                {"success": True, "message": "The user has been created successfully."},
+                status=status.HTTP_201_CREATED,
+            )
 
         except Exception as e:
             logger.error(traceback.format_exc())
