@@ -7,7 +7,7 @@ dummyUsers = [
         "Surname": "Hashem",
         "DateOfBirth": datetime.date(1980, 12, 25),
         "PhoneNumber": "",
-        "Email": "hashem7@hotmail.com",
+        "EmailAddress": "hashem7@hotmail.com",
         "Address": "Baghdat, Iraq"
     },
     {
@@ -15,7 +15,7 @@ dummyUsers = [
         "Surname": "Emami",
         "DateOfBirth": datetime.date(1995, 8, 14),
         "PhoneNumber": "",
-        "Email": "emamila89@hotmail.com",
+        "EmailAddress": "emamila89@hotmail.com",
         "Address": "Aleppo, Syria"
     },
     {
@@ -23,7 +23,7 @@ dummyUsers = [
         "Surname": "Sipho",
         "DateOfBirth": datetime.date(1990, 2, 4),
         "PhoneNumber": "",
-        "Email": "sipdla@gmail.com",
+        "EmailAddress": "sipdla@gmail.com",
         "Address": "Istanbul, Turkey"
     },
     {
@@ -31,7 +31,7 @@ dummyUsers = [
         "Surname": "Faraad",
         "DateOfBirth": datetime.date(1987, 6, 20),
         "PhoneNumber": "",
-        "Email": "faraadm41@gmail.com",
+        "EmailAddress": "faraadm41@gmail.com",
         "Address": "Berlin, Germany"
     },
     {
@@ -39,7 +39,7 @@ dummyUsers = [
         "Surname": "Awad",
         "DateOfBirth": datetime.date(1984, 9, 18),
         "PhoneNumber": "",
-        "Email": "awad23@gmail.com",
+        "EmailAddress": "awad23@gmail.com",
         "Address": "Cairo, Egypt"
     }
 ]
