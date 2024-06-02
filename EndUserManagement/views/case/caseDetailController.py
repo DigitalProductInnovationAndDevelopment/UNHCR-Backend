@@ -3,6 +3,8 @@ import logging
 import json
 
 from EndUserManagement.models import Case
+from EndUserManagement.serializers.responseSerializers.caseListResponseEndUserSerializer import \
+    CaseListResponseEndUserSerializer
 from EndUserManagement.services import (
     PaginationService,
     TranslationService,
@@ -29,18 +31,28 @@ def caseDetailController(request, id, **kwargs):
         Gets a case.
         @Endpoint: /cases/:id
         """
+
+
         try:
+            caseToGet = Case.objects.get(ID=id)
+            serializer = CaseListResponseEndUserSerializer(caseToGet)
             return Response(
-                {"success": True, "message": "CASE GET HIT!"},
+                {"success": True, "case": serializer.data},
                 status=status.HTTP_200_OK,
             )
-
+        except Case.DoesNotExist as err:
+            logger.error(traceback.format_exc())
+            return Response(
+                {"success": False, "message": translationService.translate('case.not.exist')},
+                status=status.HTTP_404_NOT_FOUND,
+            )
         except Exception as e:
             logger.error(traceback.format_exc())
             return Response(
                 {"success": False, "message": str(e)},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
 
     elif request.method == "PUT":
         """
@@ -95,9 +107,19 @@ def caseDetailController(request, id, **kwargs):
         @Endpoint: /cases/:id
         """
         try:
+            caseToDelete = Case.objects.get(ID=id)
+            serializer = CaseListResponseEndUserSerializer(caseToDelete)
+            caseToDelete.delete()
             return Response(
                 {"success": True, "message": "CASE DELETE HIT!"},
                 status=status.HTTP_200_OK,
+            )
+
+        except Case.DoesNotExist as err:
+            logger.error(traceback.format_exc())
+            return Response(
+                {"success": False, "message": translationService.translate('case.not.exist')},
+                status=status.HTTP_404_NOT_FOUND,
             )
 
         except Exception as e:

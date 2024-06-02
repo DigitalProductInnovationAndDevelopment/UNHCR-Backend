@@ -1,18 +1,23 @@
 import os
 import traceback
 import logging
+import json
 
 from EndUserManagement.models import Case
+from EndUserManagement.serializers.responseSerializers.caseListResponseEndUserSerializer import \
+    CaseListResponseEndUserSerializer
 from EndUserManagement.services import (
     PaginationService,
     TranslationService,
 )
 from EndUserManagement.serializers.responseSerializers import createCaseListResponseEndUserSerializer
-from EndUserManagement.serializers.inputValidators import createCaseListValidator
+from EndUserManagement.serializers.inputValidators import createCaseListValidator, CaseCreateValidator
 
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view
+
+from rest_framework import serializers
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
@@ -22,7 +27,7 @@ paginationService = PaginationService()
 translationService = TranslationService()
 
 # Create your views here.
-@api_view(["GET", "POST"])
+@api_view(["GET", "POST","PUT"])
 def casesController(request, **kwargs):
 
     if request.method == "GET":
@@ -101,13 +106,32 @@ def casesController(request, **kwargs):
 
     elif request.method == "POST":
         """
-        Creates a case.
-        @Endpoint: /cases
-        """
+             Creates a case.
+             @Endpoint: /cases
+             @QueryParam: User (Int, REQUIRED (For the end user), OPTIONAL (For admins))
+             (ID of the user whose cases will be fetched)
+             @QueryParam: Description (String, OPTIONAL) (Part of the description of the description of the wanted case(s))
+             """
         try:
+            requestBody = json.loads(request.body)
+            paramValidator = CaseCreateValidator(data=requestBody)
+            isParamsValid = paramValidator.is_valid(raise_exception=False)
+            # The case for body param(s) not being as they should be
+            if not isParamsValid:
+                return Response(
+                    {"success": False, "message": str(paramValidator.errors)},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            validatedData = paramValidator.validated_data
+            print(validatedData)
+            newCase = Case(**validatedData)
+            newCase.save()
+
+            serializer = CaseListResponseEndUserSerializer(newCase)
+
             return Response(
-                {"success": True, "message": "CASE CREATE HIT!"},
-                status=status.HTTP_200_OK,
+                {"success": True, "message": translationService.translate('user.create.successful'),"case": serializer.data},
+                status=status.HTTP_201_CREATED,
             )
 
         except Exception as e:
@@ -117,6 +141,43 @@ def casesController(request, **kwargs):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+    elif request.method == "POST":
+        """
+             Creates a case.
+             @Endpoint: /cases
+             @QueryParam: User (Int, REQUIRED (For the end user), OPTIONAL (For admins))
+             (ID of the user whose cases will be fetched)
+             @QueryParam: Description (String, OPTIONAL) (Part of the description of the description of the wanted case(s))
+             """
+        try:
+            requestBody = json.loads(request.body)
+            paramValidator = CaseCreateValidator(data=requestBody)
+            isParamsValid = paramValidator.is_valid(raise_exception=False)
+            # The case for body param(s) not being as they should be
+            if not isParamsValid:
+                return Response(
+                    {"success": False, "message": str(paramValidator.errors)},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            validatedData = paramValidator.validated_data
+            print(validatedData)
+            newCase = Case(**validatedData)
+            newCase.save()
+
+            serializer = CaseListResponseEndUserSerializer(newCase)
+
+            return Response(
+                {"success": True, "message": translationService.translate('user.create.successful'),
+                 "case": serializer.data},
+                status=status.HTTP_201_CREATED,
+            )
+
+        except Exception as e:
+            logger.error(traceback.format_exc())
+            return Response(
+                {"success": False, "message": str(e)},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
     else:
         return Response(
             {"success": False, "message": translationService.translate("HTTP.method.invalid")},
