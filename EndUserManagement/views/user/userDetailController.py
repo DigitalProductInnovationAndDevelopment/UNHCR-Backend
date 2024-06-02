@@ -64,11 +64,17 @@ def userDetailController(request, id, **kwargs):
         @Endpoint: /users/:id
         """
         try:
+            user = User.objects.get(ID=id)
+            user.delete()
             return Response(
-                {"success": True, "message": "USER DELETE HIT!"},
+                {"success": True, "message": translationService.translate('user.delete.successful')},
                 status=status.HTTP_200_OK,
             )
-
+        except User.DoesNotExist:
+            return Response(
+                {"success": False, "message": "User not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
         except Exception as e:
             logger.error(traceback.format_exc())
             return Response(
