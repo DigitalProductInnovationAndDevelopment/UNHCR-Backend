@@ -21,7 +21,6 @@ services:
     restart: always
     #volumes:
     #  - .:/usr/src/app
-    entrypoint: ["./wait.sh"]
     depends_on:
       - db
     working_dir: "/usr/src/app"
