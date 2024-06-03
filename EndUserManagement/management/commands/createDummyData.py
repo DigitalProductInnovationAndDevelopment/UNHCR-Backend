@@ -14,9 +14,11 @@ class Command(BaseCommand):
         try:
             dummyUsers = getDummyUsers()
             dummyCases = getDummyCases()
+            dummyPwd = "1234567"
 
             for dummyUser in dummyUsers:
                 dummyUserModel = User(**dummyUser)
+                dummyUserModel.set_password(dummyPwd)
                 dummyUserModel.save()
                 dummyCasesOfUser = dummyCases[dummyUser["Name"]] if dummyUser["Name"] in dummyCases else None
                 if dummyCasesOfUser:

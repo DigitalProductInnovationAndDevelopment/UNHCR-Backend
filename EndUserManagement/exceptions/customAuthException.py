@@ -1,0 +1,2 @@
+class customAuthException(Exception):
+    pass

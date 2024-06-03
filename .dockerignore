@@ -1,0 +1,12 @@
+.git
+.idea
+.gitignore
+.dockerignore
+.vs*/
+.venv/
+*.md
+*.ps1
+docker-compose.yml
+Dockerfile
+venv
+db.sqlite3

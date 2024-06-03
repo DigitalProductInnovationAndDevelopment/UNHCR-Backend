@@ -1,13 +1,7 @@
 # chmod +x scripts/migrate_db.sh
 # ./scripts/migrate_db.sh
 
-# Clean and prepare the migration folder
-folder_path="EndUserManager/migrations"
-if [ -d "$folder_path" ]; then
-    echo "Folder exists. Deleting..."
-    rm -rf "$folder_path"
-fi
-mkdir -p "$folder_path"
+# Before running this script, check if you have a migratons folder in every app with an empty __init__.py file
 
 # Apply database migrations
 python manage.py makemigrations

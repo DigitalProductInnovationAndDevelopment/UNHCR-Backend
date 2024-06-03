@@ -40,6 +40,11 @@ def usersController(request, **kwargs):
             )
 
     elif request.method == "POST":
+        # For now, the users can only be created via the sign up endpoint. Admin user create will be developed later.
+        return Response(
+            {"success": False, "message": translationService.translate("HTTP.not.authorized")},
+            status=status.HTTP_401_UNAUTHORIZED,
+        )
         """
         Creates a user.
         @Endpoint: /users
@@ -47,8 +52,9 @@ def usersController(request, **kwargs):
         @BodyParam: Surname (String, REQUIRED)
         @BodyParam: DateOfBirth (String (YYYY-MM-DD), OPTIONAL)
         @BodyParam: PhoneNumber (String, OPTIONAL)
-        @BodyParam: Email (String, REQUIRED)
+        @BodyParam: EmailAddress (String, REQUIRED)
         @BodyParam: Address (String, OPTIONAL)
+        """
         """
         try:
             requestBody = json.loads(request.body)
@@ -74,7 +80,7 @@ def usersController(request, **kwargs):
                 {"success": False, "message": str(e)},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-
+        """
     else:
         return Response(
             {"success": False, "message": translationService.translate("HTTP.method.invalid")},
