@@ -32,5 +32,5 @@ EXPOSE 8000
 
 RUN ls -a
 
-RUN chmod +x ./wait.sh
-ENTRYPOINT ["./wait.sh"]
+RUN chmod +x ./scripts/wait_db.sh
+ENTRYPOINT ["./scripts/wait_db.sh"]
