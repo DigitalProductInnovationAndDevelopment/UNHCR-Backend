@@ -1,4 +1,6 @@
 from .userCreateValidator import UserCreateValidator
+from .signUpValidator import SignUpValidator
 from .caseListValidator import createCaseListValidator
 from .caseUpdateValidator import createCaseUpdateValidator
 from .userUpdateValidator import createUserUpdateValidator
+from .loginValidator import LoginValidator
