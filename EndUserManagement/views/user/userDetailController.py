@@ -1,5 +1,6 @@
 import traceback
 import logging
+import json
 
 from EndUserManagement.models import User
 from EndUserManagement.services import (
@@ -11,6 +12,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view
 from EndUserManagement.serializers.inputValidators import createCaseUpdateValidator
+from EndUserManagement.serializers.inputValidators import createUserUpdateValidator
 from EndUserManagement.serializers.responseSerializers import createUserFetchResponseSerializer
 
 # Get an instance of a logger
@@ -61,18 +63,20 @@ def userDetailController(request, id, **kwargs):
         @BodyParam: Address (String, OPTIONAL)
         """
         try:
-            user_id = request.query_params.get('id')
-            requestBody = json.loads(request.body)
-            user = User.objects.get(id=user_id)
-            paramValidator = UserUpdateValidator(data=requestBody, instance=user)
-            isParamsValid = paramValidator.is_valid(raise_exception=False)
+            user = User.objects.get(ID=id)
+            bodyParamsValidatorPtr = createUserUpdateValidator()
+            requestBody = request.body.decode('utf-8')
+            bodyParams = json.loads(requestBody)
+            bodyParamsValidator = bodyParamsValidatorPtr(data = bodyParams)
+            isBodyParamsValid = bodyParamsValidator.is_valid(raise_exception = False)
+            
             # The case for body param(s) not being as they should be
-            if not isParamsValid:
+            if not isBodyParamsValid:
                 return Response(
-                    {"success": False, "message": str(paramValidator.errors)},
+                    {"success": False, "message": str(bodyParamsValidator.errors)},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
-            validatedData = paramValidator.validated_data
+            validatedData = bodyParamsValidator.validated_data
             for attr, value in validatedData.items():
                 setattr(user, attr, value)
             user.save()
