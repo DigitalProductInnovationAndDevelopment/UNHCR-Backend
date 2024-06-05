@@ -5,6 +5,7 @@ class TranslationService:
             "case.not.exist": {"en-us": "The case does not exist."},
             "case.update.successful": {"en-us": "The case has been successfully updated."},
             "user.create.successful": {"en-us": "The user has been successfully created."},
+            "user.not.found": {"en-us": "User not found."},
             "": {"en-us": ""},
         }
 
