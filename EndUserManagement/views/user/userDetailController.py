@@ -67,12 +67,12 @@ def userDetailController(request, id, **kwargs):
             user = User.objects.get(ID=id)
             user.delete()
             return Response(
-                {"success": True, "message": translationService.translate('user.delete.successful')},
+                {"success": True, "message": translationService.translate("user.delete.successful")},
                 status=status.HTTP_200_OK,
             )
         except User.DoesNotExist:
             return Response(
-                {"success": False, "message": "User not found"},
+                {"success": False, "message": translationService.translate("user.not.exist")},
                 status=status.HTTP_404_NOT_FOUND,
             )
         except Exception as e:

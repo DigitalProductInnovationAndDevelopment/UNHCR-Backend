@@ -7,7 +7,8 @@ class TranslationService:
             "case.update.successful": {"en-us": "The case has been successfully updated."},
             "user.create.successful": {"en-us": "The user has been successfully created."},
             "user.delete.successful": {"en-us": "The user has been successfully deleted."},
-            'user.not.authenticated': {"en-us": "Authentication not successful. Check the email and password and try again."},
+            "user.not.authenticated": {"en-us": "Authentication not successful. Check the email and password and try again."},
+            "user.not.exist": {"en-us": "The user does not exist."},
             "": {"en-us": ""},
         }
 
