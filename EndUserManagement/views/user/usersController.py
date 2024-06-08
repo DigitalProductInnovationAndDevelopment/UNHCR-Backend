@@ -1,3 +1,4 @@
+import os
 import traceback
 import logging
 import json
@@ -7,6 +8,7 @@ from EndUserManagement.services import (
     PaginationService,
     TranslationService,
 )
+from EndUserManagement.serializers.responseSerializers import createUserListResponseSerializer
 from EndUserManagement.serializers.inputValidators import UserCreateValidator
 
 from rest_framework.response import Response
@@ -30,8 +32,17 @@ def usersController(request, **kwargs):
         @Endpoint: /users
         """
         try:
-            pass
-
+            users = User.objects.all()
+            responseSerializer = createUserListResponseSerializer()
+            pageNumber, pageCount, data = paginationService.fetchPaginatedResults(users, request, responseSerializer,
+                                                                                    int(os.environ.get('USER_PAGINATION_COUNT', '25')))
+                
+            return Response({'success': True,
+                                'current_page': pageNumber,
+                                'page_count': pageCount,
+                                'data': data},
+                status=status.HTTP_200_OK,
+            )
         except Exception as e:
             logger.error(traceback.format_exc())
             return Response(
