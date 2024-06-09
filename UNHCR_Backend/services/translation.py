@@ -10,7 +10,6 @@ class TranslationService:
             "user.not.authenticated": {"en-us": "Authentication not successful. Check the email and password and try again."},
             "user.not.exist": {"en-us": "The user does not exist."},
             "user.update.successful": {"en-us": "The user has been successfully updated."},
-            "user.not.found": {"en-us": "User not found."},
             'user.not.authenticated': {"en-us": "Authentication not successful. Check the email and password and try again."},
             "": {"en-us": ""},
         }

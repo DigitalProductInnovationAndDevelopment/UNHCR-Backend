@@ -1,2 +1,2 @@
 from .caseListResponseEndUserSerializer import createCaseListResponseEndUserSerializer
-from .fetchUserResponseSerializer import createUserFetchResponseSerializer
+from .userGetResponseSerializer import UserGetResponseSerializer

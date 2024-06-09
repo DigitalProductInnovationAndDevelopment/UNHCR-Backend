@@ -5,7 +5,7 @@ import json
 from django.contrib.auth import authenticate
 
 from EndUserManagement.models import User
-from EndUserManagement.services import (
+from UNHCR_Backend.services import (
     PaginationService,
     TranslationService,
 )

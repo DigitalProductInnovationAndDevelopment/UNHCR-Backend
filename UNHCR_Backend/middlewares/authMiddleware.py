@@ -43,8 +43,7 @@ class AuthMiddleware:
         return response
 
     def __setUserInfoToView(self, loggedUser, token, request, view_kwargs):
-        loggedUserInfo = model_to_dict(loggedUser)
-        view_kwargs["loggedUserInfo"] = loggedUserInfo
+        view_kwargs["loggedUser"] = loggedUser
         view_kwargs["loggedUserToken"] = token
         return None
 

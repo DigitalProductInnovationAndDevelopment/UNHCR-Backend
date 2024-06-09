@@ -1,26 +1,12 @@
 from rest_framework import serializers
 
 from EndUserManagement.models import User
-
-def createUserUpdateValidator(role = 'EndUser'):
-    if role == 'EndUser':
-        return UserUpdateValidatorEndUser
-    return UserUpdateValidatorAdmin
     
-class UserUpdateValidatorEndUser(serializers.ModelSerializer):
+class UserUpdateValidator(serializers.ModelSerializer):
     class Meta:
         model = User
-        exclude = ['ID', 'UpdatedAt', 'CreatedAt']
-    
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        for field in self.fields.values():
-            field.required = False
-
-class UserUpdateValidatorAdmin(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        exclude = ['ID', 'UpdatedAt', 'CreatedAt']
+        # These fields should not be updated by the end user
+        exclude = ['ID', 'password', 'last_login', 'is_superuser', 'email', 'is_staff', 'is_active', 'date_joined', 'CreatedAt', 'UpdatedAt', 'groups', 'user_permissions']
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

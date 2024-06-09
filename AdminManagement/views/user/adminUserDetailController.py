@@ -11,8 +11,9 @@ from UNHCR_Backend.services import (
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view
-from EndUserManagement.serializers.inputValidators import UserUpdateValidator
-from EndUserManagement.serializers.responseSerializers import UserGetResponseSerializer
+from AdminManagement.serializers.inputValidators import createCaseUpdateValidator
+from AdminManagement.serializers.inputValidators import AdminUserUpdateValidator
+from AdminManagement.serializers.responseSerializers import AdminUserGetResponseSerializer
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
@@ -23,31 +24,23 @@ translationService = TranslationService()
 
 # Create your views here.
 @api_view(["GET", "PUT", "DELETE"])
-def userDetailController(request, id, **kwargs):
-    # loggedUser detected in UNHCR_Backend.middlewares.authMiddleware
-    user = kwargs["loggedUser"]
-    # The case for end user tring to operate on another user except himself/herself
-    # Use admin endpoints for operating on other users
-    if not user.ID == id:
-        return Response(
-                {"success": False, "message": translationService.translate("HTTP.not.authorized")},
-                status=status.HTTP_401_UNAUTHORIZED,
-            )
+def adminUserDetailController(request, id, **kwargs):
 
     if request.method == "GET":
         """
-        Gets a user. It is designed for users to get info about their own accounts.
+        Gets a user.
         @Endpoint: /users/:id
         """
         try: 
-            responseSerializer = UserGetResponseSerializer(user)
+            user = User.objects.get(ID=id)
+            responseSerializer = AdminUserGetResponseSerializer(user)
             return Response(
                 {"success": True, "data": responseSerializer.data},
                 status=status.HTTP_200_OK,
             )
         except User.DoesNotExist:
             return Response(
-                {"success": False, "message": translationService.translate('user.not.exist')},
+                {"success": False, "message": translationService.translate('user.not.found')},
                 status=status.HTTP_404_NOT_FOUND,
             )
         except Exception as e:
@@ -59,7 +52,7 @@ def userDetailController(request, id, **kwargs):
 
     elif request.method == "PUT":
         """
-        Updates a user. It is designed for users to update their own accounts.
+        Updates a user.
         @Endpoint: /users/:id
         @BodyParam: Name (String, OPTIONAL)
         @BodyParam: Surname (String, OPTIONAL)
@@ -69,11 +62,11 @@ def userDetailController(request, id, **kwargs):
         @BodyParam: Address (String, OPTIONAL)
         """
         try:
+            user = User.objects.get(ID=id)
             requestBody = request.body.decode('utf-8')
             bodyParams = json.loads(requestBody)
-            bodyParamsValidator = UserUpdateValidator(data = bodyParams)
+            bodyParamsValidator = AdminUserUpdateValidator(data = bodyParams)
             isBodyParamsValid = bodyParamsValidator.is_valid(raise_exception = False)
-            
             # The case for body param(s) not being as they should be
             if not isBodyParamsValid:
                 return Response(
@@ -91,7 +84,7 @@ def userDetailController(request, id, **kwargs):
 
         except User.DoesNotExist:
             return Response(
-                {"success": False, "message": translationService.translate('user.not.exist')},
+                {"success": False, "message": translationService.translate('user.not.found')},
                 status=status.HTTP_404_NOT_FOUND,
             )
 
@@ -104,10 +97,11 @@ def userDetailController(request, id, **kwargs):
 
     elif request.method == "DELETE":
         """
-        Deletes a user. It is designed for users to delete their own accounts.
+        Deletes a user.
         @Endpoint: /users/:id
         """
         try:
+            user = User.objects.get(ID=id)
             user.delete()
             return Response(
                 {"success": True, "message": translationService.translate("user.delete.successful")},
@@ -124,7 +118,7 @@ def userDetailController(request, id, **kwargs):
                 {"success": False, "message": str(e)},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-
+        
     else:
         return Response(
             {"success": False, "message": translationService.translate("HTTP.method.invalid")},

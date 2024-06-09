@@ -59,7 +59,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'EndUserManagement.middlewares.AuthMiddleware'
+    'UNHCR_Backend.middlewares.AuthMiddleware'
 ]
 
 ROOT_URLCONF = 'UNHCR_Backend.urls'

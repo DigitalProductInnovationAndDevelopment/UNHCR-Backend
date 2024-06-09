@@ -3,7 +3,7 @@ import logging
 import json
 
 from EndUserManagement.models import Case
-from EndUserManagement.services import (
+from UNHCR_Backend.services import (
     PaginationService,
     TranslationService,
 )
