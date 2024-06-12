@@ -7,6 +7,7 @@ done
 
 python manage.py makemigrations
 python manage.py migrate
+python manage.py createDummyData
 
 # If DB is empty, open these commands to insert dummy data to DB
 echo "Inserting dummy data.."

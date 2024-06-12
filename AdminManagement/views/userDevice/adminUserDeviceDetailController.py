@@ -2,7 +2,7 @@ import traceback
 import logging
 import json
 
-from EndUserManagement.models import User
+from AdminManagement.models import UserDevice
 from UNHCR_Backend.services import (
     PaginationService,
     TranslationService,
@@ -11,9 +11,6 @@ from UNHCR_Backend.services import (
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view
-from AdminManagement.serializers.inputValidators import createCaseUpdateValidator
-from AdminManagement.serializers.inputValidators import AdminUserUpdateValidator
-from AdminManagement.serializers.responseSerializers import AdminUserGetResponseSerializer
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
@@ -28,21 +25,11 @@ def adminUserDeviceDetailController(request, id, **kwargs):
 
     if request.method == "GET":
         """
-        Gets a user.
-        @Endpoint: /users/:id
+        Gets a user device.
+        @Endpoint: /user-devices/:id
         """
         try: 
-            user = User.objects.get(ID=id)
-            responseSerializer = AdminUserGetResponseSerializer(user)
-            return Response(
-                {"success": True, "data": responseSerializer.data},
-                status=status.HTTP_200_OK,
-            )
-        except User.DoesNotExist:
-            return Response(
-                {"success": False, "message": translationService.translate('user.not.found')},
-                status=status.HTTP_404_NOT_FOUND,
-            )
+            pass
         except Exception as e:
             logger.error(traceback.format_exc())
             return Response(
@@ -52,41 +39,17 @@ def adminUserDeviceDetailController(request, id, **kwargs):
 
     elif request.method == "PUT":
         """
-        Updates a user.
-        @Endpoint: /users/:id
-        @BodyParam: Name (String, OPTIONAL)
-        @BodyParam: Surname (String, OPTIONAL)
-        @BodyParam: DateOfBirth (String (YYYY-MM-DD), OPTIONAL)
-        @BodyParam: PhoneNumber (String, OPTIONAL)
-        @BodyParam: EmailAddress (String, OPTIONAL)
-        @BodyParam: Address (String, OPTIONAL)
+        Updates a user device.
+        @Endpoint: /users/:ids
+        @BodyParam: DeviceID (String)
+        @BodyParam: Brand (String, OPTIONAL)
+        @BodyParam: OS (String, OPTIONAL)
+        @BodyParam: AppVersion (String, OPTIONAL)
+        @BodyParam: NotificationToken (String, OPTIONAL)
+        @BodyParam: IsNotificationTokenExpiredn (Boolean, OPTIONAL)
         """
         try:
-            user = User.objects.get(ID=id)
-            requestBody = request.body.decode('utf-8')
-            bodyParams = json.loads(requestBody)
-            bodyParamsValidator = AdminUserUpdateValidator(data = bodyParams)
-            isBodyParamsValid = bodyParamsValidator.is_valid(raise_exception = False)
-            # The case for body param(s) not being as they should be
-            if not isBodyParamsValid:
-                return Response(
-                    {"success": False, "message": str(bodyParamsValidator.errors)},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-            validatedData = bodyParamsValidator.validated_data
-            for attr, value in validatedData.items():
-                setattr(user, attr, value)
-            user.save()
-            return Response(
-                {"success": True, "message": translationService.translate('user.update.successful')},
-                status=status.HTTP_200_OK,
-            )
-
-        except User.DoesNotExist:
-            return Response(
-                {"success": False, "message": translationService.translate('user.not.found')},
-                status=status.HTTP_404_NOT_FOUND,
-            )
+          pass
 
         except Exception as e:
             logger.error(traceback.format_exc())
@@ -97,21 +60,11 @@ def adminUserDeviceDetailController(request, id, **kwargs):
 
     elif request.method == "DELETE":
         """
-        Deletes a user.
-        @Endpoint: /users/:id
+        Deletes a user device.
+        @Endpoint: /user-devices/:id
         """
         try:
-            user = User.objects.get(ID=id)
-            user.delete()
-            return Response(
-                {"success": True, "message": translationService.translate("user.delete.successful")},
-                status=status.HTTP_200_OK,
-            )
-        except User.DoesNotExist:
-            return Response(
-                {"success": False, "message": translationService.translate("user.not.exist")},
-                status=status.HTTP_404_NOT_FOUND,
-            )
+           pass
         except Exception as e:
             logger.error(traceback.format_exc())
             return Response(
