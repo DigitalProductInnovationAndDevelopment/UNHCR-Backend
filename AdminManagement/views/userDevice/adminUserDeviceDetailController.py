@@ -12,6 +12,8 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view
 
+from AdminManagement.serializers.responseSerializers import AdminUserDeviceGetResponseSerializer
+
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
 
@@ -29,7 +31,17 @@ def adminUserDeviceDetailController(request, id, **kwargs):
         @Endpoint: /user-devices/:id
         """
         try: 
-            pass
+            userDevice = UserDevice.objects.get(ID=id)
+            responseSerializer = AdminUserDeviceGetResponseSerializer(user)
+            return Response(
+                {"success": True, "data": responseSerializer.data},
+                status=status.HTTP_200_OK,
+            )
+        except UserDevice.DoesNotExist:
+            return Response(
+                {"success": False, "message": translationService.translate('userDevice.not.found')},
+                status=status.HTTP_404_NOT_FOUND,
+            )
         except Exception as e:
             logger.error(traceback.format_exc())
             return Response(
