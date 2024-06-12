@@ -13,6 +13,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 
 from AdminManagement.serializers.responseSerializers import AdminUserDeviceGetResponseSerializer
+from AdminManagement.serializers.inputValidators import AdminUserDeviceUpdateValidator
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
@@ -61,7 +62,31 @@ def adminUserDeviceDetailController(request, id, **kwargs):
         @BodyParam: IsNotificationTokenExpiredn (Boolean, OPTIONAL)
         """
         try:
-          pass
+            userDevice = UserDevice.objects.get(ID=id)
+            requestBody = request.body.decode('utf-8')
+            bodyParams = json.loads(requestBody)
+            bodyParamsValidator = AdminUserDeviceUpdateValidator(data = bodyParams)
+            isBodyParamsValid = bodyParamsValidator.is_valid(raise_exception = False)
+            # The case for body param(s) not being as they should be
+            if not isBodyParamsValid:
+                return Response(
+                    {"success": False, "message": str(bodyParamsValidator.errors)},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            validatedData = bodyParamsValidator.validated_data
+            for attr, value in validatedData.items():
+                setattr(user, attr, value)
+            userDevice.save()
+            return Response(
+                {"success": True, "message": translationService.translate('userDevice.update.successful')},
+                status=status.HTTP_200_OK,
+            )
+
+        except UserDevice.DoesNotExist:
+            return Response(
+                {"success": False, "message": translationService.translate('userDevice.not.found')},
+                status=status.HTTP_404_NOT_FOUND,
+            )
 
         except Exception as e:
             logger.error(traceback.format_exc())

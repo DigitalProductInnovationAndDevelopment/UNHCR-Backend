@@ -12,6 +12,7 @@ class TranslationService:
             "user.update.successful": {"en-us": "The user has been successfully updated."},
             'user.not.authenticated': {"en-us": "Authentication not successful. Check the email and password and try again."},
             "userDevice.create.successful": {"en-us": "The user device has been successfully created."},
+            "userDevice.update.successful": {"en-us": "The user device has been successfully updated."},
             "userDevice.delete.successful": {"en-us": "The user device has been successfully deleted."},
             "userDevice.not.exist": {"en-us": "The user device does not exist."},
             "": {"en-us": ""},

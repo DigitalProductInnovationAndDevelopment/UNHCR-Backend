@@ -5,4 +5,4 @@ from AdminManagement.models import UserDevice
 class AdminUserDeviceUpdateValidator(serializers.ModelSerializer):
     class Meta:
         model = UserDevice
-        exclude = ['ID', 'UpdatedAt', 'CreatedAt']
+        exclude = ['ID', 'UserID', 'UpdatedAt', 'CreatedAt']
