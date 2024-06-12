@@ -1,2 +1,4 @@
 from .adminUserGetResponseSerializer import AdminUserGetResponseSerializer
 from .adminUserListResponseSerializer import AdminUserListReponseSerializer
+from .adminUserDeviceGetResponseSerializer import AdminUserDeviceGetResponseSerializer
+from .adminUserDeviceListResponseSerializer import AdminUserDeviceListResponseSerializer

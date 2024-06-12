@@ -9,6 +9,8 @@ from UNHCR_Backend.services import (
     TranslationService,
 )
 from AdminManagement.serializers.inputValidators import AdminUserDeviceCreateValidator
+from AdminManagement.serializers.inputValidators import AdminUserDeviceListResponseSerializer
+
 
 from rest_framework.response import Response
 from rest_framework import status
@@ -30,14 +32,26 @@ def adminUserDevicesController(request, **kwargs):
         Lists all user devices.
         @Endpoint: /user-devices
         """
+
         try:
-           pass
+            userDevices = UserDevice.objects.all()
+            responseSerializer = AdminUserDeviceListResponseSerializer
+            pageNumber, pageCount, data = paginationService.fetchPaginatedResults(userDevices, request, responseSerializer,
+                                                                                    int(os.environ.get('ADMIN_USER_DEVICE_PAGINATION_COUNT', '25')))
+                
+            return Response({'success': True,
+                                'current_page': pageNumber,
+                                'page_count': pageCount,
+                                'data': data},
+                status=status.HTTP_200_OK,
+            )
         except Exception as e:
             logger.error(traceback.format_exc())
             return Response(
                 {"success": False, "message": str(e)},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
 
     elif request.method == "POST":
         """
