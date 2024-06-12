@@ -64,13 +64,24 @@ def adminUserDeviceDetailController(request, id, **kwargs):
         @Endpoint: /user-devices/:id
         """
         try:
-           pass
+            userDevice = UserDevice.objects.get(ID=id)
+            userDevice.delete()
+            return Response(
+                {"success": True, "message": translationService.translate("userDevice.delete.successful")},
+                status=status.HTTP_200_OK,
+            )
+        except UserDevice.DoesNotExist:
+            return Response(
+                {"success": False, "message": translationService.translate("userDevice.not.exist")},
+                status=status.HTTP_404_NOT_FOUND,
+            )
         except Exception as e:
             logger.error(traceback.format_exc())
             return Response(
                 {"success": False, "message": str(e)},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+        
         
     else:
         return Response(
