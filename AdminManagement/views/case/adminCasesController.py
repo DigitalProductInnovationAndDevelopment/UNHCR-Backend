@@ -8,9 +8,8 @@ from UNHCR_Backend.services import (
     PaginationService,
     TranslationService,
 )
-from EndUserManagement.serializers.inputValidators import CaseCreateValidator, CaseListValidator
-from EndUserManagement.serializers.responseSerializers.caseListResponseSerializer import \
-    CaseListResponseSerializer
+from AdminManagement.serializers.inputValidators import AdminCaseCreateValidator, AdminCaseListValidator
+from AdminManagement.serializers.responseSerializers.adminCaseListResponseSerializer import AdminCaseListReponseSerializer
 
 from rest_framework.response import Response
 from rest_framework import status
@@ -27,7 +26,7 @@ translationService = TranslationService()
 
 # Create your views here.
 @api_view(["GET", "POST"])
-def casesController(request, **kwargs):
+def adminCasesController(request, **kwargs):
     # loggedUser detected in UNHCR_Backend.middlewares.authMiddleware
     user = kwargs["loggedUser"]
 
@@ -37,13 +36,14 @@ def casesController(request, **kwargs):
         @Endpoint: /cases
         @QueryParam: Description (String, OPTIONAL) (Part of the description of the description of the wanted case(s))
         @QueryParam: Status (String, OPTIONAL) (Status of the wanted case(s))
+        @QueryParam: User (Int, OPTIONAL) (ID of the User whose cases will be listed)
         @QueryParam: CreatedAtOrder (String ("asc" OR "desc"), OPTIONAL)
         @QueryParam: UpdatedAtOrder (String ("asc" OR "desc"), OPTIONAL)
         @QueryParam: page (Int, OPTIONAL) (For pagination. If given as '2', second page of the results is fetched) 
         """
         try:
             queryParams = request.GET.dict()
-            queryParamsValidator = CaseListValidator(data = queryParams)
+            queryParamsValidator = AdminCaseListValidator(data = queryParams)
             isQueryParamsValid = queryParamsValidator.is_valid(raise_exception = False)
             # The case for query param(s) not being as they should be
             if not isQueryParamsValid:
@@ -56,7 +56,8 @@ def casesController(request, **kwargs):
             queryset = Case.objects
 
             # Filter according to User ID
-            queryset = queryset.filter(User = user)
+            if "User" in validatedData:
+                queryset = queryset.filter(User = validatedData["User"])
 
             # Filter according to Description (Search if the given Description is a part of the Description field of any Case object)
             if "Description" in validatedData:
@@ -82,9 +83,9 @@ def casesController(request, **kwargs):
 
             cases = queryset.all()
             
-            responseSerializer = CaseListResponseSerializer
+            responseSerializer = AdminCaseListReponseSerializer
             pageNumber, pageCount, data = paginationService.fetchPaginatedResults(cases, request, responseSerializer,
-                                                                                  int(os.environ.get('CASE_PAGINATION_COUNT', '25')))
+                                                                                  int(os.environ.get('ADMIN_CASE_PAGINATION_COUNT', '25')))
             return Response({'success': True,
                              'current_page': pageNumber,
                              'page_count': pageCount,
@@ -101,13 +102,15 @@ def casesController(request, **kwargs):
 
     elif request.method == "POST":
         """
-             Creates a case.
-             @Endpoint: /cases
-             @BodyParam: Description (String, REQUIRED) (Part of the description of the description of the wanted case(s))
-             """
+        Creates a case.
+        @Endpoint: /cases
+        @BodyParam: User (Int, REQUIRED) (ID of the user whom the case will belong to)
+        @BodyParam: Description (String, REQUIRED) (Description of the case which will be created)
+        @BodyParam: Status (String, REQUIRED) (Status of the case which will be created)
+        """
         try:
             requestBody = json.loads(request.body)
-            paramValidator = CaseCreateValidator(data=requestBody)
+            paramValidator = AdminCaseCreateValidator(data=requestBody)
             isParamsValid = paramValidator.is_valid(raise_exception=False)
             # The case for body param(s) not being as they should be
             if not isParamsValid:
@@ -116,8 +119,7 @@ def casesController(request, **kwargs):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
             validatedData = paramValidator.validated_data
-            initialStatus = "OPEN"
-            newCase = Case(User = user, Status = initialStatus, **validatedData)
+            newCase = Case(**validatedData)
             newCase.save()
 
             return Response(

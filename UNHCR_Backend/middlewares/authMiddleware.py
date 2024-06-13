@@ -24,7 +24,6 @@ class AuthMiddleware:
         self.get_response = get_response
         self.paths_to_exclude = [
             "/__debug__",
-            "/admin",
             "/api/login",
             "/api/logout"
             "/api/signup",

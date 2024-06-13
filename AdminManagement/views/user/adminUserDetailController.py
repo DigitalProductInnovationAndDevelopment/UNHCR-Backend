@@ -11,7 +11,6 @@ from UNHCR_Backend.services import (
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view
-from AdminManagement.serializers.inputValidators import createCaseUpdateValidator
 from AdminManagement.serializers.inputValidators import AdminUserUpdateValidator
 from AdminManagement.serializers.responseSerializers import AdminUserGetResponseSerializer
 

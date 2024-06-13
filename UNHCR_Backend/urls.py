@@ -20,6 +20,7 @@ from django.urls import re_path, include, path
 urlpatterns = [
     # TODO: API Version should be dynamic (It should come from env variables)
     re_path("", include("EndUserManagement.urls")),
+    re_path("", include("AdminManagement.urls")),
 ]
 
 urlpatterns = urlpatterns + [

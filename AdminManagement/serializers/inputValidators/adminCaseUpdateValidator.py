@@ -2,10 +2,10 @@ from rest_framework import serializers
 
 from EndUserManagement.models import Case, User
     
-class CaseUpdateValidator(serializers.ModelSerializer):
+class AdminCaseUpdateValidator(serializers.ModelSerializer):
     class Meta:
         model = Case
-        exclude = ['ID', 'User', 'Status', 'UpdatedAt', 'CreatedAt']
+        exclude = ['ID', 'UpdatedAt', 'CreatedAt']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
