@@ -9,8 +9,7 @@ from UNHCR_Backend.services import (
     TranslationService,
 )
 from EndUserManagement.serializers.inputValidators import CaseCreateValidator, CaseListValidator
-from EndUserManagement.serializers.responseSerializers.caseListResponseSerializer import \
-    CaseListResponseSerializer
+from EndUserManagement.serializers.responseSerializers import CaseListResponseSerializer, CaseCreateResponseSerializer
 
 from rest_framework.response import Response
 from rest_framework import status
@@ -80,8 +79,7 @@ def casesController(request, **kwargs):
                 else:
                     queryset = queryset.order_by('-UpdatedAt')
 
-            cases = queryset.all()
-            
+            cases = queryset.all()   
             responseSerializer = CaseListResponseSerializer
             pageNumber, pageCount, data = paginationService.fetchPaginatedResults(cases, request, responseSerializer,
                                                                                   int(os.environ.get('CASE_PAGINATION_COUNT', '25')))
@@ -119,9 +117,9 @@ def casesController(request, **kwargs):
             initialStatus = "OPEN"
             newCase = Case(User = user, Status = initialStatus, **validatedData)
             newCase.save()
-
+            responseSerializer = CaseCreateResponseSerializer(newCase)
             return Response(
-                {"success": True, "message": translationService.translate('case.create.successful')},
+                {"success": True, "data": responseSerializer.data},
                 status=status.HTTP_201_CREATED,
             )
 

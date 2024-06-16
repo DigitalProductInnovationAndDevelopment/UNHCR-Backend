@@ -11,8 +11,9 @@ from UNHCR_Backend.services import (
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view
+
 from EndUserManagement.serializers.inputValidators import UserUpdateValidator
-from EndUserManagement.serializers.responseSerializers import UserGetResponseSerializer
+from EndUserManagement.serializers.responseSerializers import UserGetResponseSerializer, UserUpdateResponseSerializer
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
@@ -22,7 +23,7 @@ paginationService = PaginationService()
 translationService = TranslationService()
 
 # Create your views here.
-@api_view(["GET", "PUT", "DELETE"])
+@api_view(["GET", "PATCH", "DELETE"])
 def userDetailController(request, id, **kwargs):
     # loggedUser detected in UNHCR_Backend.middlewares.authMiddleware
     user = kwargs["loggedUser"]
@@ -57,7 +58,7 @@ def userDetailController(request, id, **kwargs):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-    elif request.method == "PUT":
+    elif request.method == "PATCH":
         """
         Updates a user. It is designed for users to update their own accounts.
         @Endpoint: /users/:id
@@ -84,6 +85,7 @@ def userDetailController(request, id, **kwargs):
             for attr, value in validatedData.items():
                 setattr(user, attr, value)
             user.save()
+            responseSerializer = UserUpdateResponseSerializer(user)
             return Response(
                 {"success": True, "message": translationService.translate('user.update.successful')},
                 status=status.HTTP_200_OK,
@@ -91,7 +93,7 @@ def userDetailController(request, id, **kwargs):
 
         except User.DoesNotExist:
             return Response(
-                {"success": False, "message": translationService.translate('user.not.exist')},
+                {"success": False, "data": responseSerializer.data},
                 status=status.HTTP_404_NOT_FOUND,
             )
 

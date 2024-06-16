@@ -9,7 +9,7 @@ from UNHCR_Backend.services import (
     TranslationService,
 )
 from AdminManagement.serializers.inputValidators import AdminCaseCreateValidator, AdminCaseListValidator
-from AdminManagement.serializers.responseSerializers.adminCaseListResponseSerializer import AdminCaseListReponseSerializer
+from AdminManagement.serializers.responseSerializers import AdminCaseListReponseSerializer, AdminCaseCreateReponseSerializer
 
 from rest_framework.response import Response
 from rest_framework import status
@@ -121,9 +121,10 @@ def adminCasesController(request, **kwargs):
             validatedData = paramValidator.validated_data
             newCase = Case(**validatedData)
             newCase.save()
+            responseSerializer = AdminCaseCreateReponseSerializer(newCase)
 
             return Response(
-                {"success": True, "message": translationService.translate('case.create.successful')},
+                {"success": True, "data": responseSerializer.data},
                 status=status.HTTP_201_CREATED,
             )
 

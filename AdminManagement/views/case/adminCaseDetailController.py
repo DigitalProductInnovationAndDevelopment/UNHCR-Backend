@@ -8,7 +8,7 @@ from UNHCR_Backend.services import (
     TranslationService,
 )
 from AdminManagement.serializers.inputValidators import AdminCaseUpdateValidator
-from AdminManagement.serializers.responseSerializers import AdminCaseGetReponseSerializer
+from AdminManagement.serializers.responseSerializers import AdminCaseGetReponseSerializer, AdminCaseUpdateReponseSerializer
 
 from rest_framework.response import Response
 from rest_framework import status
@@ -22,7 +22,7 @@ paginationService = PaginationService()
 translationService = TranslationService()
 
 # Create your views here.
-@api_view(["GET", "PUT", "DELETE"])
+@api_view(["GET", "PATCH", "DELETE"])
 def adminCaseDetailController(request, id, **kwargs):
     # loggedUser detected in UNHCR_Backend.middlewares.authMiddleware
     user = kwargs["loggedUser"]
@@ -41,9 +41,9 @@ def adminCaseDetailController(request, id, **kwargs):
         @Endpoint: /cases/:id
         """
         try:
-            serializer = AdminCaseGetReponseSerializer(case)
+            responseSerializer = AdminCaseGetReponseSerializer(case)
             return Response(
-                {"success": True, "data": serializer.data},
+                {"success": True, "data": responseSerializer.data},
                 status=status.HTTP_200_OK,
             )
 
@@ -54,7 +54,7 @@ def adminCaseDetailController(request, id, **kwargs):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-    elif request.method == "PUT":
+    elif request.method == "PATCH":
         """
         Updates a case.
         @Endpoint: /cases/:id
@@ -77,8 +77,10 @@ def adminCaseDetailController(request, id, **kwargs):
             for attr, value in validatedData.items():
                 setattr(case, attr, value)
             case.save()
+            responseSerializer = AdminCaseUpdateReponseSerializer(case)
+
             return Response(
-                {"success": True, "message": translationService.translate('case.update.successful')},
+                {"success": True, "data": responseSerializer.data},
                 status=status.HTTP_200_OK,
             )
 
