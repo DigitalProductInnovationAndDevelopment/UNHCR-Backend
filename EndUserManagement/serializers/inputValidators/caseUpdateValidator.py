@@ -9,5 +9,8 @@ class CaseUpdateValidator(serializers.ModelSerializer):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        # CaseTypes should not be submitted as an empty list
+        requiredFields = ['CaseTypes']
         for field in self.fields.values():
-            field.required = False
+            if field.field_name not in requiredFields:
+                field.required = False

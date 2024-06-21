@@ -34,14 +34,18 @@ def casesController(request, **kwargs):
         """
         Lists all cases of the logged in user.
         @Endpoint: /cases
+        @QueryParam: Coverage (String ("INDIVIDUAL" OR "HOUSEHOLD"), OPTIONAL) (Coverage of the wanted case(s))
         @QueryParam: Description (String, OPTIONAL) (Part of the description of the description of the wanted case(s))
         @QueryParam: Status (String, OPTIONAL) (Status of the wanted case(s))
+        @QueryParam: CaseTypes (String, OPTIONAL, MULTIPLE) (IDs of the case types of the wanted case(s). This param can be submitted more than once)
+        @QueryParam: PsnTypes (String, OPTIONAL, MULTIPLE) (IDs of the case types of the wanted case(s). This param can be submitted more than once)
         @QueryParam: CreatedAtOrder (String ("asc" OR "desc"), OPTIONAL)
         @QueryParam: UpdatedAtOrder (String ("asc" OR "desc"), OPTIONAL)
         @QueryParam: page (Int, OPTIONAL) (For pagination. If given as '2', second page of the results is fetched) 
         """
         try:
-            queryParams = request.GET.dict()
+            # request.GET.dict() method discards query params if there are more than one query param with the same key
+            queryParams = dict(request.GET)
             queryParamsValidator = CaseListValidator(data = queryParams)
             isQueryParamsValid = queryParamsValidator.is_valid(raise_exception = False)
             # The case for query param(s) not being as they should be
@@ -56,30 +60,38 @@ def casesController(request, **kwargs):
 
             # Filter according to User ID
             queryset = queryset.filter(User = user)
-
+            # Filter according to Coverage
+            if "Coverage" in validatedData:
+                queryset = queryset.filter(Coverage = validatedData["Coverage"])
             # Filter according to Description (Search if the given Description is a part of the Description field of any Case object)
             if "Description" in validatedData:
                 queryset = queryset.filter(Description__icontains = validatedData["Description"])
-
             # Filter according to Status
             if "Status" in validatedData:
                 queryset = queryset.filter(Status = validatedData["Status"])
+            # Filter according to CaseTypes
+            if "CaseTypes" in validatedData:
+                caseTypeIds = [caseType.ID for caseType in validatedData["CaseTypes"]] 
+                queryset = queryset.filter(CaseTypes__in = caseTypeIds)
 
+            # Filter according to PsnTypes
+            if "PsnTypes" in validatedData:
+                psnTypeIds = [psnType.ID for psnType in validatedData["PsnTypes"]] 
+                queryset = queryset.filter(PsnTypes__in = psnTypeIds)
             # Filter according to CreatedAtOrder
             if "CreatedAtOrder" in validatedData:
                 if validatedData["CreatedAtOrder"] == "asc":
                     queryset = queryset.order_by('CreatedAt')
                 else:
                     queryset = queryset.order_by('-CreatedAt')
-
             # Filter according to UpdatedAtOrder
             if "UpdatedAtOrder" in validatedData:
                 if validatedData["UpdatedAtOrder"] == "asc":
                     queryset = queryset.order_by('UpdatedAt')
                 else:
                     queryset = queryset.order_by('-UpdatedAt')
-
-            cases = queryset.all()   
+                    
+            cases = queryset.distinct().all()   
             responseSerializer = CaseListResponseSerializer
             pageNumber, pageCount, data = paginationService.fetchPaginatedResults(cases, request, responseSerializer,
                                                                                   int(os.environ.get('CASE_PAGINATION_COUNT', '25')))
@@ -99,10 +111,13 @@ def casesController(request, **kwargs):
 
     elif request.method == "POST":
         """
-             Creates a case.
-             @Endpoint: /cases
-             @BodyParam: Description (String, REQUIRED) (Part of the description of the description of the wanted case(s))
-             """
+        Creates a case.
+        @Endpoint: /cases
+        @BodyParam: Coverage (String ("INDIVIDUAL" OR "HOUSEHOLD"), REQUIRED) (Coverage for the new case)
+        @BodyParam: Description (String, REQUIRED) (Text description for the new case)
+        @BodyParam: CaseTypes (String, REQUIRED, LIST) (IDs of the case types.)
+        @BodyParam: PsnTypes (String, OPTIONAL, LIST) (IDs of the case types.)
+        """
         try:
             requestBody = json.loads(request.body)
             paramValidator = CaseCreateValidator(data=requestBody)
@@ -114,9 +129,16 @@ def casesController(request, **kwargs):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
             validatedData = paramValidator.validated_data
+            caseCreateDict = validatedData.copy()
+            caseCreateDict.pop("CaseTypes", None)
+            caseCreateDict.pop("PsnTypes", None)
             initialStatus = "OPEN"
-            newCase = Case(User = user, Status = initialStatus, **validatedData)
+            newCase = Case(User = user, Status = initialStatus, **caseCreateDict)
             newCase.save()
+            if "CaseTypes" in validatedData:
+                newCase.CaseTypes.set(validatedData["CaseTypes"])
+            if "PsnTypes" in validatedData:
+                newCase.PsnTypes.set(validatedData["PsnTypes"])
             responseSerializer = CaseCreateResponseSerializer(newCase)
             return Response(
                 {"success": True, "data": responseSerializer.data},

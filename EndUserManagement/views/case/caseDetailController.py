@@ -64,7 +64,10 @@ def caseDetailController(request, id, **kwargs):
         """
         Updates a case.
         @Endpoint: /cases/:id
+        @BodyParam: Coverage (String ("INDIVIDUAL" OR "HOUSEHOLD"), OPTIONAL)
         @BodyParam: Description (String, OPTIONAL)
+        @BodyParam: CaseTypes (String, REQUIRED, LIST) (IDs of the case types.)
+        @BodyParam: PsnTypes (String, OPTIONAL, LIST) (IDs of the case types.)
         """
         try:
             requestBody = request.body.decode('utf-8')
@@ -78,9 +81,16 @@ def caseDetailController(request, id, **kwargs):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
             validatedData = bodyParamsValidator.validated_data
-            for attr, value in validatedData.items():
+            caseUpdateDict = validatedData.copy()
+            caseUpdateDict.pop("CaseTypes", None)
+            caseUpdateDict.pop("PsnTypes", None)
+            for attr, value in caseUpdateDict.items():
                 setattr(case, attr, value)
             case.save()
+            if "CaseTypes" in validatedData:
+                case.CaseTypes.set(validatedData["CaseTypes"])
+            if "PsnTypes" in validatedData:
+                case.PsnTypes.set(validatedData["PsnTypes"])
             responseSerializer = CaseUpdateResponseSerializer(case)
             return Response(
                 {"success": True, "data": responseSerializer.data},

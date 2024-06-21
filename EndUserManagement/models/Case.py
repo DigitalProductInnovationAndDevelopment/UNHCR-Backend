@@ -25,7 +25,8 @@ class Case(TimestampAbstractModel):
     Description = models.TextField()
     Status = models.CharField(max_length = 20, choices = caseStatusChoices)
     CaseTypes = models.ManyToManyField(CaseType, related_name='CaseTypes')
-    PsnTypes = models.ManyToManyField(PsnType, related_name='PsnTypes')
+    # PsnTypes is not required
+    PsnTypes = models.ManyToManyField(PsnType, blank = True, related_name='PsnTypes')
 
     class Meta:
         db_table = 'Case'
