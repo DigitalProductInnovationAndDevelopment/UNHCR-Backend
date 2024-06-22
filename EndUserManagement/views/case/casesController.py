@@ -8,6 +8,7 @@ from UNHCR_Backend.services import (
     PaginationService,
     TranslationService,
 )
+from EndUserManagement.services import CaseService
 from EndUserManagement.serializers.inputValidators import CaseCreateValidator, CaseListValidator
 from EndUserManagement.serializers.responseSerializers import CaseListResponseSerializer, CaseCreateResponseSerializer
 
@@ -23,6 +24,7 @@ logger = logging.getLogger(__name__)
 # Create instances of services
 paginationService = PaginationService()
 translationService = TranslationService()
+caseService = CaseService()
 
 # Create your views here.
 @api_view(["GET", "POST"])
@@ -57,7 +59,6 @@ def casesController(request, **kwargs):
 
             validatedData = queryParamsValidator.validated_data
             queryset = Case.objects
-
             # Filter according to User ID
             queryset = queryset.filter(User = user)
             # Filter according to Coverage
@@ -94,10 +95,19 @@ def casesController(request, **kwargs):
             responseSerializer = CaseListResponseSerializer
             pageNumber, pageCount, data = paginationService.fetchPaginatedResults(cases, request, responseSerializer,
                                                                                   int(os.environ.get('CASE_PAGINATION_COUNT', '25')))
+            canUserCreateCase, missingField = caseService.canUserCreateCase(user)
+            allCaseTypes = caseService.getAllCaseTypes()
+            allPsnTypes = caseService.getAllPsnTypes()
             return Response({'success': True,
                              'current_page': pageNumber,
                              'page_count': pageCount,
-                             'data': data},
+                             'data': data,
+                             'case_create': {
+                                'eligibility': canUserCreateCase,
+                                'missing_field': missingField,
+                                'case_types': allCaseTypes,
+                                'psn_types': allPsnTypes
+                             }},
                 status=status.HTTP_200_OK,
             )
 
