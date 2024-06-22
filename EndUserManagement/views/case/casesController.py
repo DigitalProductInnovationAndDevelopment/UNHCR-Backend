@@ -73,7 +73,6 @@ def casesController(request, **kwargs):
             if "CaseTypes" in validatedData:
                 caseTypeIds = [caseType.ID for caseType in validatedData["CaseTypes"]] 
                 queryset = queryset.filter(CaseTypes__in = caseTypeIds)
-
             # Filter according to PsnTypes
             if "PsnTypes" in validatedData:
                 psnTypeIds = [psnType.ID for psnType in validatedData["PsnTypes"]] 
