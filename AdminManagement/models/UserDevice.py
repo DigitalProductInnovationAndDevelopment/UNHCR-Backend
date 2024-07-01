@@ -13,7 +13,7 @@ class UserDevice(TimestampAbstractModel):
     OS = models.CharField(max_length = 20, default = "")
     AppVersion = models.CharField(max_length = 20, default = "")
     NotificationToken = models.CharField(max_length = 255, default = "")
-    IsNotificationTokenExpiredn = models.BooleanField(max_length = 255, default = "")
+    IsNotificationTokenExpired = models.BooleanField(max_length = 255, default = "")
 
     class Meta:
         db_table = 'UserDevice'

@@ -3,22 +3,33 @@ import datetime
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from .TimestampAbstractModel import TimestampAbstractModel
+from .modelChoices import userGenderChoices, userCountryOfAsylumChoices, userNationalityChoices
 
 # The model for the cases of the end users
 class User(TimestampAbstractModel, AbstractUser):
     ID = models.BigAutoField(primary_key = True, db_column = 'ID')
     Name = models.CharField(max_length = 255)
     Surname = models.CharField(max_length = 255)
-    # DateOfBirth is not required. We want to simplify the registering as much as we can
-    DateOfBirth = models.DateTimeField(default = None, blank = True, null = True)
-    # Phone number is not required. Some end users may not have a phone number.
-    # We can validate the phone number later with regex
-    PhoneNumber = models.CharField(max_length = 20, default = "")
-    # Email is required for authentication
+    DateOfBirth = models.DateTimeField()
+    PlaceOfBirth = models.CharField(max_length = 255)
+    Gender = models.CharField(max_length = 20, choices = userGenderChoices)
+    # TODO: UNHCR asks for an integer phone number but how we will detect the country code?
+    # For integers bigger than 2147483647, we get error. That is why converted the phone num to string
+    PhoneNumber = models.CharField(max_length = 30)
+    # Email is used for authentication
     EmailAddress = models.EmailField(unique = True)
-    # Address is not required
-    Address = models.CharField(max_length = 255, default = "")
-    # TODO: Maybe we can add a country field in addition to the address (For module filtering)
+    ProvinceOfResidence = models.CharField(max_length = 255)
+    CountryOfAsylum = models.CharField(max_length = 255, choices = userCountryOfAsylumChoices)
+    Nationality = models.CharField(max_length = 255, choices = userNationalityChoices)
+    # null = True and blank = True also behaves as default = None (NULL)
+    NationalIdNumber = models.CharField(max_length = 255, null = True, blank = True)
+    CountryOfAsylumRegistrationNumber = models.CharField(max_length = 255, null = True, blank = True)
+    UnhcrIndividualId = models.CharField(max_length = 255, null = True, blank = True)
+    HouseholdPersonCount = models.IntegerField(null = True, blank = True)
+    ReceiveMessagesFromUnhcr = models.BooleanField(default = False)
+    ReceiveNotificationsFromUnhcr = models.BooleanField(default = False)
+    ReceiveSurveysFromUnhcr = models.BooleanField(default = False)
+    # Below are the fields inherited from the AbstractUser model
     username = None
     first_name = None
     last_name = None

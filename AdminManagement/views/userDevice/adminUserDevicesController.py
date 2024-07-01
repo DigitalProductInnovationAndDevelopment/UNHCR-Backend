@@ -63,7 +63,7 @@ def adminUserDevicesController(request, **kwargs):
         @BodyParam: OS (String, OPTIONAL)
         @BodyParam: AppVersion (String, OPTIONAL)
         @BodyParam: NotificationToken (String, OPTIONAL)
-        @BodyParam: IsNotificationTokenExpiredn (Boolean, OPTIONAL)
+        @BodyParam: IsNotificationTokenExpired (Boolean, OPTIONAL)
         """
         try:
             requestBody = json.loads(request.body)

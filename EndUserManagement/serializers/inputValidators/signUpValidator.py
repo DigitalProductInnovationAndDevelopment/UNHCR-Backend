@@ -7,4 +7,4 @@ class SignUpValidator(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        exclude = ['password']
+        exclude = ['ID', 'password', 'last_login', 'is_superuser', 'email', 'is_staff', 'is_active', 'date_joined', 'CreatedAt', 'UpdatedAt', 'groups', 'user_permissions']

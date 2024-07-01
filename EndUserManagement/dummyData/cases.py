@@ -3,37 +3,31 @@ import os
 from distutils.util import strtobool
 
 dummyCases = {
-    "Sadiq": [
+    "Ali": [],
+    "Eduard": [
         {
-            "Description": "I am living inside the UN refugee camp in the north of Baghdat, near the city border."\
-            "I live with my wife and 3 kids in the tent number 13. I believe that there are not enough hygiene products"\
-            "inside the daily supplies box they give us. I think we need more soap and shampoo as a family. I am attaching"\
-            "the contents of the box as a photo to this request. I would be very happy if you take care about this problem."\
-            "Thank you!",
-            "Status": "OPEN"
-        },
-        {
-            "Description": "Hello. My friend Salahaddin also lives in the UN refugee camp in the North of Baghdat."\
-            "He has a problem but he does not have a smartphone and he can only speak Arabic. We are attaching his"\
-            "voice recording to this request. Thank you for reading this message.",
-            "Status": "CW ASSIGNED"
-        },
-        {
-            "Description": "I am living inside the UN refugee camp in the north of Baghdat, near the city border."\
-            "I live with my wife and 3 kids in the tent number 13. My mom and dad lives inside the tent next to me"\
-            "but my dad needs a wheelchair. Can you provide us a wheelchair? Thank you.",
-            "Status": "ON PROGRESS"
+            "Coverage": "HOUSEHOLD",
+            "Description": "I arrived to Chisinau on x/x/2024 after our house in Kharkiv was bombarded by the Russian army. My father passed away" \
+            "int eh hospital and together with my mother and sister we sought refuge in Moldova. We need a place to stay, clothes, food and some cash" \
+            "to survive. My mother is pregnant and needs medical assistance as well. We don't speak Romanian and don't know where to get assistance.",
+            "Status": "OPEN",
+            "CaseTypes": ["Cash assistance", "Shelter support", "Health support", "NFI support"],
+            "PsnTypes": ["Pregnant woman"]
         }
     ],
-    "Latimah": [
+    "Dilshad": [
         {
-            "Description": "My English bad. I record sound. Thanks.",
-            "Status": "OPEN"
+            "Coverage": "INDIVIDUAL",
+            "Description": "I was living in Tehran and had a boyfriend. He suggested that we get married and we elude from the houses of our parents." \
+            "I believed him and run away from my parents' house. We tried to go to Turkiye but in the border the police officers called our parents." \
+            "My family came and took me. I was held captive at home for 4 months until I could find an opportunity to escape from the beating and threats" \
+            "of my father. Through a smuggler I arrived the Iraq, I got registered. A week ago I learned that my family found where I am living and I" \
+            "continue to receive threats from them. I am afraid of my life every second. I need help.",
+            "Status": "OPEN",
+            "CaseTypes": ["Protection from violence", "Legal support"],
+            "PsnTypes": []
         }
-    ],
-    "Mandla": [],
-    "Mohammad": [],
-    "Yousef": []
+    ]
 }
 
 def getDummyCases():

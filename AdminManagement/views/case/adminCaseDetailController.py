@@ -7,8 +7,8 @@ from UNHCR_Backend.services import (
     PaginationService,
     TranslationService,
 )
-from EndUserManagement.serializers.inputValidators import CaseUpdateValidator
-from EndUserManagement.serializers.responseSerializers import CaseGetResponseSerializer, CaseUpdateResponseSerializer
+from AdminManagement.serializers.inputValidators import AdminCaseUpdateValidator
+from AdminManagement.serializers.responseSerializers import AdminCaseGetReponseSerializer, AdminCaseUpdateReponseSerializer
 
 from rest_framework.response import Response
 from rest_framework import status
@@ -23,17 +23,11 @@ translationService = TranslationService()
 
 # Create your views here.
 @api_view(["GET", "PATCH", "DELETE"])
-def caseDetailController(request, id, **kwargs):
+def adminCaseDetailController(request, id, **kwargs):
     # loggedUser detected in UNHCR_Backend.middlewares.authMiddleware
     user = kwargs["loggedUser"]
     try:
         case = Case.objects.get(ID=id)
-        # The case for uesr trying to operate on a case which does not belong to him/her
-        if user.ID != case.User.ID:
-            return Response(
-                    {"success": False, "message": translationService.translate("HTTP.not.authorized")},
-                    status=status.HTTP_401_UNAUTHORIZED,
-                )
     except Case.DoesNotExist as err:
         logger.error(traceback.format_exc())
         return Response(
@@ -47,7 +41,7 @@ def caseDetailController(request, id, **kwargs):
         @Endpoint: /cases/:id
         """
         try:
-            responseSerializer = CaseGetResponseSerializer(case)
+            responseSerializer = AdminCaseGetReponseSerializer(case)
             return Response(
                 {"success": True, "data": responseSerializer.data},
                 status=status.HTTP_200_OK,
@@ -64,15 +58,14 @@ def caseDetailController(request, id, **kwargs):
         """
         Updates a case.
         @Endpoint: /cases/:id
-        @BodyParam: Coverage (String ("INDIVIDUAL" OR "HOUSEHOLD"), OPTIONAL)
-        @BodyParam: Description (String, OPTIONAL)
-        @BodyParam: CaseTypes (String, REQUIRED, LIST) (IDs of the case types.)
-        @BodyParam: PsnTypes (String, OPTIONAL, LIST) (IDs of the case types.)
+        @BodyParam: User (Int, OPTIONAL) (ID of the user whom the case will belong to)
+        @BodyParam: Description (String, OPTIONAL) (New description of the case)
+        @BodyParam: Status (String, OPTIONAL) (New status of the case)
         """
         try:
             requestBody = request.body.decode('utf-8')
             bodyParams = json.loads(requestBody)
-            bodyParamsValidator = CaseUpdateValidator(data = bodyParams)
+            bodyParamsValidator = AdminCaseUpdateValidator(data = bodyParams)
             isBodyParamsValid = bodyParamsValidator.is_valid(raise_exception = False)
             # The case for body param(s) not being as they should be
             if not isBodyParamsValid:
@@ -81,17 +74,11 @@ def caseDetailController(request, id, **kwargs):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
             validatedData = bodyParamsValidator.validated_data
-            caseUpdateDict = validatedData.copy()
-            caseUpdateDict.pop("CaseTypes", None)
-            caseUpdateDict.pop("PsnTypes", None)
-            for attr, value in caseUpdateDict.items():
+            for attr, value in validatedData.items():
                 setattr(case, attr, value)
             case.save()
-            if "CaseTypes" in validatedData:
-                case.CaseTypes.set(validatedData["CaseTypes"])
-            if "PsnTypes" in validatedData:
-                case.PsnTypes.set(validatedData["PsnTypes"])
-            responseSerializer = CaseUpdateResponseSerializer(case)
+            responseSerializer = AdminCaseUpdateReponseSerializer(case)
+
             return Response(
                 {"success": True, "data": responseSerializer.data},
                 status=status.HTTP_200_OK,

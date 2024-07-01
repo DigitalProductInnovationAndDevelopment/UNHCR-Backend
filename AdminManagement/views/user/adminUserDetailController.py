@@ -11,9 +11,8 @@ from UNHCR_Backend.services import (
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view
-from AdminManagement.serializers.inputValidators import createCaseUpdateValidator
 from AdminManagement.serializers.inputValidators import AdminUserUpdateValidator
-from AdminManagement.serializers.responseSerializers import AdminUserGetResponseSerializer
+from AdminManagement.serializers.responseSerializers import AdminUserGetResponseSerializer, AdminUserUpdateResponseSerializer
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
@@ -23,7 +22,7 @@ paginationService = PaginationService()
 translationService = TranslationService()
 
 # Create your views here.
-@api_view(["GET", "PUT", "DELETE"])
+@api_view(["GET", "PATCH", "DELETE"])
 def adminUserDetailController(request, id, **kwargs):
 
     if request.method == "GET":
@@ -38,6 +37,7 @@ def adminUserDetailController(request, id, **kwargs):
                 {"success": True, "data": responseSerializer.data},
                 status=status.HTTP_200_OK,
             )
+        
         except User.DoesNotExist:
             return Response(
                 {"success": False, "message": translationService.translate('user.not.found')},
@@ -50,7 +50,7 @@ def adminUserDetailController(request, id, **kwargs):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-    elif request.method == "PUT":
+    elif request.method == "PATCH":
         """
         Updates a user.
         @Endpoint: /users/:id
@@ -77,8 +77,9 @@ def adminUserDetailController(request, id, **kwargs):
             for attr, value in validatedData.items():
                 setattr(user, attr, value)
             user.save()
+            responseSerializer = AdminUserUpdateResponseSerializer(user)
             return Response(
-                {"success": True, "message": translationService.translate('user.update.successful')},
+                {"success": True, "data": responseSerializer.data},
                 status=status.HTTP_200_OK,
             )
 
@@ -87,7 +88,6 @@ def adminUserDetailController(request, id, **kwargs):
                 {"success": False, "message": translationService.translate('user.not.found')},
                 status=status.HTTP_404_NOT_FOUND,
             )
-
         except Exception as e:
             logger.error(traceback.format_exc())
             return Response(
@@ -107,6 +107,7 @@ def adminUserDetailController(request, id, **kwargs):
                 {"success": True, "message": translationService.translate("user.delete.successful")},
                 status=status.HTTP_200_OK,
             )
+        
         except User.DoesNotExist:
             return Response(
                 {"success": False, "message": translationService.translate("user.not.exist")},

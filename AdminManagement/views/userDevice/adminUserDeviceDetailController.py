@@ -59,7 +59,7 @@ def adminUserDeviceDetailController(request, id, **kwargs):
         @BodyParam: OS (String, OPTIONAL)
         @BodyParam: AppVersion (String, OPTIONAL)
         @BodyParam: NotificationToken (String, OPTIONAL)
-        @BodyParam: IsNotificationTokenExpiredn (Boolean, OPTIONAL)
+        @BodyParam: IsNotificationTokenExpired (Boolean, OPTIONAL)
         """
         try:
             userDevice = UserDevice.objects.get(ID=id)

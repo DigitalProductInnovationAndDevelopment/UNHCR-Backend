@@ -24,9 +24,8 @@ class AuthMiddleware:
         self.get_response = get_response
         self.paths_to_exclude = [
             "/__debug__",
-            "/admin",
             "/api/login",
-            "/api/logout"
+            "/api/logout",
             "/api/signup",
         ]
         # One-time configuration and initialization.
@@ -49,9 +48,9 @@ class AuthMiddleware:
 
     def process_view(self, request, view_func, view_args, view_kwargs):
         try:
-            # Checking auth for every endpoint except the login and admin endpoints
-            if not [pex for pex in self.paths_to_exclude if pex in request.path]:
-                # authenitcate() verifies and decode the token
+            # Checking auth for every endpoint except the singup, login and admin endpoints
+            if not request.path in self.paths_to_exclude:
+                # authenticate() verifies and decode the token
                 # If token is invalid, it raises an exception and returns 401
                 response = JWT_authenticator.authenticate(request)
                 if response is not None:
