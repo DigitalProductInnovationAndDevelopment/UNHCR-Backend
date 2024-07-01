@@ -4,3 +4,4 @@ from .adminCaseUpdateValidator import AdminCaseUpdateValidator
 from .adminUserCreateValidator import AdminUserCreateValidator
 from .adminUserUpdateValidator import AdminUserUpdateValidator
 from .adminUserDeviceCreateValidator import AdminUserDeviceCreateValidator
+from .adminUserDeviceUpdateValidator import AdminUserDeviceUpdateValidator

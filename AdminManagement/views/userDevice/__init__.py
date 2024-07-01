@@ -1,2 +1,2 @@
 from .adminUserDevicesController import adminUserDevicesController
-from .adminUserDeviceDetailController import adminUseDevicerDetailController
+from .adminUserDeviceDetailController import adminUserDeviceDetailController

@@ -9,7 +9,7 @@ from UNHCR_Backend.services import (
     TranslationService,
 )
 from AdminManagement.serializers.inputValidators import AdminUserDeviceCreateValidator
-from AdminManagement.serializers.inputValidators import AdminUserDeviceListResponseSerializer
+from AdminManagement.serializers.responseSerializers import AdminUserDeviceListResponseSerializer
 
 
 from rest_framework.response import Response
