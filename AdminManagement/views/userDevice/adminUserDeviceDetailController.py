@@ -33,14 +33,14 @@ def adminUserDeviceDetailController(request, id, **kwargs):
         """
         try: 
             userDevice = UserDevice.objects.get(ID=id)
-            responseSerializer = AdminUserDeviceGetResponseSerializer(user)
+            responseSerializer = AdminUserDeviceGetResponseSerializer(userDevice)
             return Response(
                 {"success": True, "data": responseSerializer.data},
                 status=status.HTTP_200_OK,
             )
         except UserDevice.DoesNotExist:
             return Response(
-                {"success": False, "message": translationService.translate('userDevice.not.found')},
+                {"success": False, "message": translationService.translate('userDevice.not.exist')},
                 status=status.HTTP_404_NOT_FOUND,
             )
         except Exception as e:
@@ -54,7 +54,7 @@ def adminUserDeviceDetailController(request, id, **kwargs):
         """
         Updates a user device.
         @Endpoint: /users/:ids
-        @BodyParam: DeviceID (String)
+        @BodyParam: DeviceID (String, OPTIONAL)
         @BodyParam: Brand (String, OPTIONAL)
         @BodyParam: OS (String, OPTIONAL)
         @BodyParam: AppVersion (String, OPTIONAL)
@@ -75,7 +75,7 @@ def adminUserDeviceDetailController(request, id, **kwargs):
                 )
             validatedData = bodyParamsValidator.validated_data
             for attr, value in validatedData.items():
-                setattr(user, attr, value)
+                setattr(userDevice, attr, value)
             userDevice.save()
             return Response(
                 {"success": True, "message": translationService.translate('userDevice.update.successful')},
@@ -84,7 +84,7 @@ def adminUserDeviceDetailController(request, id, **kwargs):
 
         except UserDevice.DoesNotExist:
             return Response(
-                {"success": False, "message": translationService.translate('userDevice.not.found')},
+                {"success": False, "message": translationService.translate('userDevice.not.exist')},
                 status=status.HTTP_404_NOT_FOUND,
             )
 
