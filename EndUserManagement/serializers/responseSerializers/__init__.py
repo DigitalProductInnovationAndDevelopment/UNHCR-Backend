@@ -4,3 +4,5 @@ from .caseListResponseSerializer import CaseListResponseSerializer
 from .caseUpdateResponseSerializer import CaseUpdateResponseSerializer
 from .userGetResponseSerializer import UserGetResponseSerializer
 from .userUpdateResponseSerializer import UserUpdateResponseSerializer
+from .userDeviceListResponseSerializer import UserDeviceListResponseSerializer
+from .userDeviceGetResponseSerializer import UserDeviceGetResponseSerializer
