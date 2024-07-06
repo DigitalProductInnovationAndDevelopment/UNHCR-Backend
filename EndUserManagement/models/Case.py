@@ -14,6 +14,10 @@ class Case(TimestampAbstractModel):
         ("ON PROGRESS", "On Progress"),
         ("CASE CLOSED", "Case Closed")
     ])
+    media = models.ManyToManyField('Media', blank=True)
 
     class Meta:
         db_table = 'Case'
+
+    def get_media_files(self):
+        return self.media.all()
