@@ -9,3 +9,8 @@ db.sqlite3
 *.pyc
 credentials
 .DS_Store
+# Ignore everything in mediaStorage
+UNHCR_Backend/mediaStorage/**
+# Allow directories to be checked in, but not their contents
+!UNHCR_Backend/mediaStorage/**/
+!UNHCR_Backend/mediaStorage/**/__init__.py

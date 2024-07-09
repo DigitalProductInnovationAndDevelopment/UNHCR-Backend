@@ -13,6 +13,8 @@ class TranslationService:
             "user.not.exist": {"en-us": "The user does not exist."},
             "user.update.successful": {"en-us": "The user has been successfully updated."},
             'user.not.authenticated': {"en-us": "Authentication not successful. Check the email and password and try again."},
+            "message.not.exist": {"en-us": "The message does not exist."},
+            "message.media.not.exist": {"en-us": "The message media does not exist."},
             "": {"en-us": ""},
         }
 

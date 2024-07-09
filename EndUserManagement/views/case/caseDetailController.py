@@ -28,7 +28,7 @@ def caseDetailController(request, id, **kwargs):
     user = kwargs["loggedUser"]
     try:
         case = Case.objects.get(ID=id)
-        # The case for uesr trying to operate on a case which does not belong to him/her
+        # The case for user trying to operate on a case which does not belong to him/her
         if user.ID != case.User.ID:
             return Response(
                     {"success": False, "message": translationService.translate("HTTP.not.authorized")},

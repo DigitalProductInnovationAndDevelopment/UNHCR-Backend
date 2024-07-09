@@ -4,6 +4,8 @@ from rest_framework.urlpatterns import format_suffix_patterns
 from .views.user import *
 from .views.case import *
 from .views.login import *
+from .views.message import *
+from .views.messageMedia import *
 from .views.signup import *
 
 urlpatterns = [
@@ -11,6 +13,8 @@ urlpatterns = [
     path("api/signup", signUpController, name="signup"),
     path("api/cases", casesController, name="cases"),
     path("api/cases/<int:id>", caseDetailController, name="caseDetail"),
+    path("api/cases/<int:id>/messages", messagesController, name="messages"),
+    path("api/messages/<int:messageId>/message-media/<str:mediaId>", messageMediaDetailController, name="messageMediaDetail"),
     path("api/users", usersController, name="users"),
     path("api/users/<int:id>", userDetailController, name="userDetail"),
 ]
