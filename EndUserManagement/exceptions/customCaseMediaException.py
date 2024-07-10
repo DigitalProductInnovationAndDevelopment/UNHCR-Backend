@@ -1,0 +1,2 @@
+class customCaseMediaException(Exception):
+    pass

@@ -8,9 +8,10 @@ from UNHCR_Backend.services import (
     PaginationService,
     TranslationService,
 )
-from EndUserManagement.services import CaseService
+from EndUserManagement.services import CaseService, MediaService
 from EndUserManagement.serializers.inputValidators import CaseCreateValidator, CaseListValidator
 from EndUserManagement.serializers.responseSerializers import CaseListResponseSerializer, CaseCreateResponseSerializer
+from UNHCR_Backend.services import RequestService
 
 from rest_framework.response import Response
 from rest_framework import status
@@ -25,6 +26,8 @@ logger = logging.getLogger(__name__)
 paginationService = PaginationService()
 translationService = TranslationService()
 caseService = CaseService()
+mediaService = MediaService()
+requestService = RequestService()
 
 # Create your views here.
 @api_view(["GET", "POST"])
@@ -121,14 +124,17 @@ def casesController(request, **kwargs):
     elif request.method == "POST":
         """
         Creates a case.
+        This request's body should be the type form-data.
         @Endpoint: /cases
         @BodyParam: Coverage (String ("INDIVIDUAL" OR "HOUSEHOLD"), REQUIRED) (Coverage for the new case)
         @BodyParam: Description (String, REQUIRED) (Text description for the new case)
-        @BodyParam: CaseTypes (String, REQUIRED, LIST) (IDs of the case types.)
-        @BodyParam: PsnTypes (String, OPTIONAL, LIST) (IDs of the case types.)
+        @BodyParam: CaseTypes (String, REQUIRED, MULTIPLE) (IDs of the case types.)
+        @BodyParam: PsnTypes (String, OPTIONAL, MULTIPLE) (IDs of the case types.)
+        @BodyParam: File (File, OPTIONAL, MULTIPLE) (Files related to the case.)
         """
         try:
-            requestBody = json.loads(request.body)
+            # Transforming form data request body to dictionary
+            requestBody = requestService.transformFormDataToDict(request)
             paramValidator = CaseCreateValidator(data=requestBody)
             isParamsValid = paramValidator.is_valid(raise_exception=False)
             # The case for body param(s) not being as they should be
@@ -148,9 +154,18 @@ def casesController(request, **kwargs):
                 newCase.CaseTypes.set(validatedData["CaseTypes"])
             if "PsnTypes" in validatedData:
                 newCase.PsnTypes.set(validatedData["PsnTypes"])
+            # Returns empty list if there are no files submitted under the key 'File'
+            filesList = request.FILES.getlist('File')
+            savedFileIds = []
+            if filesList:
+                for file in filesList:
+                    fileId = mediaService.saveCaseMedia(file, newCase)
+                    savedFileIds.append(fileId)
             responseSerializer = CaseCreateResponseSerializer(newCase)
+            responseDict = responseSerializer.data.copy()
+            responseDict["Files"] = savedFileIds
             return Response(
-                {"success": True, "data": responseSerializer.data},
+                {"success": True, "data": responseDict},
                 status=status.HTTP_201_CREATED,
             )
 
