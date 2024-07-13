@@ -1,10 +1,23 @@
 from rest_framework import serializers
-from rest_framework.exceptions import ValidationError
-from collections.abc import Iterable
 
-from EndUserManagement.models import Case, CaseType, PsnType
+from EndUserManagement.models import Case
+
+class CustomFileListField(serializers.ListField):
+    def __init__(self, **kwargs):
+        # Allowing the file lists to be empty
+        kwargs['allow_empty'] = kwargs.get('allow_empty', True)
+        super().__init__(**kwargs)
+
+class CustomVoiceRecordingListField(serializers.ListField):
+    def __init__(self, **kwargs):
+        # Allowing the file lists to be empty
+        kwargs['allow_empty'] = kwargs.get('allow_empty', True)
+        super().__init__(**kwargs)
 
 class CaseCreateValidator(serializers.ModelSerializer):
+    File = CustomFileListField(child = serializers.FileField())
+    VoiceRecording = CustomVoiceRecordingListField(child = serializers.FileField())
+
     class Meta:
         model = Case
         # Status is not required because it will be OPEN initially

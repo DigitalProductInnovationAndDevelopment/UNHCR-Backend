@@ -3,10 +3,10 @@ import traceback
 import logging
 import uuid
 
-from django.http import JsonResponse
 from rest_framework.response import Response
 
 from EndUserManagement.models import User, Case, Message
+from EndUserManagement.serializers.inputValidators import MessageCreateValidator
 from EndUserManagement.serializers.responseSerializers import MessageListResponseSerializer, MessageCreateResponseSerializer
 from EndUserManagement.services import MediaService
 from UNHCR_Backend.services import (
@@ -82,36 +82,52 @@ def messagesController(request, id, **kwargs):
         @PathParam: id (ID of the case which the message is related to)
         @BodyParam: TextMessage (String, OPTIONAL) (It can be a file(s) only message)
         @BodyParam: File (File, OPTIONAL) (The file attached to the message. A message should have either a text message or a file or both)
+        @BodyParam: VoiceRecording (File, OPTIONAL) (The voice recording attached to the message)
         """
         try:
-            textMessage = request.POST.get("TextMessage", None)
-            # For now, since we only have 1 parameter, not creating an input validator
-            if textMessage and not isinstance(textMessage, str):
-                return Response({'success': False,
-                                 'message': 'The type of the given text message is invalid or the text message is empty.'},
-                    status = status.HTTP_400_BAD_REQUEST,
+            paramDict = {
+                "TextMessage": request.POST.get("TextMessage", None),
+                "File": request.FILES.getlist('File'),
+                "VoiceRecording": request.FILES.getlist('VoiceRecording')
+            }
+            paramValidator = MessageCreateValidator(data = paramDict)
+            isParamsValid = paramValidator.is_valid(raise_exception=False)
+            # The case for body param(s) not being as they should be
+            if not isParamsValid:
+                return Response(
+                    {"success": False, "message": str(paramValidator.errors)},
+                    status=status.HTTP_400_BAD_REQUEST,
                 )
+            validatedData = paramValidator.validated_data
             # Returns empty list if there are no files submitted under the key 'File'
-            filesList = request.FILES.getlist('File')
+            filesList = validatedData["File"]
+            voiceRecordingsList = validatedData["VoiceRecording"]
             messageHasMedia = False
             if filesList:
                 messageHasMedia = True
             newMessage = Message(Case = case,
-                                 TextMessage = textMessage,
+                                 TextMessage = validatedData["TextMessage"],
                                  HasMedia = messageHasMedia,
                                  SenderRole = "User")
             newMessage.save()
             savedFileIds = []
+            savedVoiceRecordingIds = []
             if filesList:
                 for file in filesList:
                     fileId = mediaService.saveMessageMedia(file, newMessage)
-                    savedFileIds.append(fileId)     
+                    savedFileIds.append(fileId)
+            if voiceRecordingsList:
+                for voiceRecording in voiceRecordingsList:
+                    voiceRecordingId = mediaService.saveMessageMedia(voiceRecording, newMessage)
+                    translationService.translateMessageVoiceRecording(voiceRecording, newMessage)
+                    savedVoiceRecordingIds.append(voiceRecordingId)  
             responseSerializer = MessageCreateResponseSerializer(newMessage)
-            responseData = responseSerializer.data.copy()
-            responseData['Files'] = savedFileIds
+            responseDict = responseSerializer.data.copy()
+            responseDict['Files'] = savedFileIds
+            responseDict['VoiceRecordings'] = savedVoiceRecordingIds
             
             return Response({'success': True,
-                             'data': responseData},
+                             'data': responseDict},
                 status=status.HTTP_201_CREATED,
             )
 

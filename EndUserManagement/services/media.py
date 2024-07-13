@@ -24,28 +24,26 @@ class MediaService:
         return self.saveMedia(file, CaseMedia, case, 'case')
         
     def saveMedia(self, file, mediaObjClass, parentObj, mediaType = 'case'):
-        if isinstance(file, TemporaryUploadedFile) or isinstance(file, InMemoryUploadedFile):
-            # tmp dir
-            fileUuid = uuid.uuid4()
-            fileUuidHex = fileUuid.hex
-            fileName = file.name
-            fileType = file.content_type
-            mediaObjCreateDict = {
-                "ID": fileUuid,
-                "MediaType": fileType,
-                "MediaName": fileName
-            }
-            if mediaType == 'case':
-                mediaStoragePath = self.caseMediaStoragePath
-                mediaObjCreateDict["Case"] = parentObj
-            else:
-                mediaStoragePath = self.messageMediaStoragePath
-                mediaObjCreateDict["Message"] = parentObj
-            # Saving the file to the storage (For now, local storage)
-            self.saveMediaFileToStorage(file, mediaStoragePath, file.name, fileUuidHex)
-            newMediaObj = mediaObjClass(**mediaObjCreateDict)
-            newMediaObj.save()
-            return newMediaObj.ID.hex
+        fileUuid = uuid.uuid4()
+        fileUuidHex = fileUuid.hex
+        fileName = file.name
+        fileType = file.content_type
+        mediaObjCreateDict = {
+            "ID": fileUuid,
+            "MediaType": fileType,
+            "MediaName": fileName
+        }
+        if mediaType == 'case':
+            mediaStoragePath = self.caseMediaStoragePath
+            mediaObjCreateDict["Case"] = parentObj
+        else:
+            mediaStoragePath = self.messageMediaStoragePath
+            mediaObjCreateDict["Message"] = parentObj
+        # Saving the file to the storage (For now, local storage)
+        self.saveMediaFileToStorage(file, mediaStoragePath, file.name, fileUuidHex)
+        newMediaObj = mediaObjClass(**mediaObjCreateDict)
+        newMediaObj.save()
+        return newMediaObj.ID.hex
         
     def saveMediaFileToStorage(self, file, mediaStoragePath, fileName, uuid):
         saveDirectory = os.path.join(self.coreAppDir, mediaStoragePath, uuid)

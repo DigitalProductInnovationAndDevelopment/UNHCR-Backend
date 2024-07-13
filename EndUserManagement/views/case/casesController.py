@@ -17,8 +17,6 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view
 
-from rest_framework import serializers
-
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
 
@@ -131,11 +129,16 @@ def casesController(request, **kwargs):
         @BodyParam: CaseTypes (String, REQUIRED, MULTIPLE) (IDs of the case types.)
         @BodyParam: PsnTypes (String, OPTIONAL, MULTIPLE) (IDs of the case types.)
         @BodyParam: File (File, OPTIONAL, MULTIPLE) (Files related to the case.)
+        @BodyParam: VoiceRecording (File, OPTIONAL) (The voice recording attached to the message)
         """
         try:
             # Transforming form data request body to dictionary
             requestBody = requestService.transformFormDataToDict(request)
-            paramValidator = CaseCreateValidator(data=requestBody)
+            requestBody.update({
+                "File": request.FILES.getlist('File'),
+                "VoiceRecording": request.FILES.getlist('VoiceRecording')
+            })
+            paramValidator = CaseCreateValidator(data = requestBody)
             isParamsValid = paramValidator.is_valid(raise_exception=False)
             # The case for body param(s) not being as they should be
             if not isParamsValid:
@@ -145,8 +148,8 @@ def casesController(request, **kwargs):
                 )
             validatedData = paramValidator.validated_data
             caseCreateDict = validatedData.copy()
-            caseCreateDict.pop("CaseTypes", None)
-            caseCreateDict.pop("PsnTypes", None)
+            for key in ['CaseTypes', 'PsnTypes', 'File', 'VoiceRecording']: 
+                caseCreateDict.pop(key, None)
             initialStatus = "OPEN"
             newCase = Case(User = user, Status = initialStatus, **caseCreateDict)
             newCase.save()
@@ -155,15 +158,24 @@ def casesController(request, **kwargs):
             if "PsnTypes" in validatedData:
                 newCase.PsnTypes.set(validatedData["PsnTypes"])
             # Returns empty list if there are no files submitted under the key 'File'
-            filesList = request.FILES.getlist('File')
+            filesList = validatedData["File"]
+            voiceRecordingsList = validatedData["VoiceRecording"]
             savedFileIds = []
+            savedVoiceRecordingIds = []
             if filesList:
                 for file in filesList:
                     fileId = mediaService.saveCaseMedia(file, newCase)
                     savedFileIds.append(fileId)
+            if voiceRecordingsList:
+                for voiceRecording in voiceRecordingsList:
+                    voiceRecordingId = mediaService.saveCaseMedia(voiceRecording, newCase)
+                    translationService.translateCaseVoiceRecording(voiceRecording, newCase)
+                    savedVoiceRecordingIds.append(voiceRecordingId)  
             responseSerializer = CaseCreateResponseSerializer(newCase)
             responseDict = responseSerializer.data.copy()
             responseDict["Files"] = savedFileIds
+            responseDict['VoiceRecordings'] = savedVoiceRecordingIds
+
             return Response(
                 {"success": True, "data": responseDict},
                 status=status.HTTP_201_CREATED,
