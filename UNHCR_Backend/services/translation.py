@@ -24,11 +24,11 @@ class TranslationService:
             return self.translationMap[translationKey][userLanguageISOCode]
         else:
             raise Exception("Translation for the message is not found.")
-        
+
     def translateCaseVoiceRecording(self, voiceRecording, relatedCase):
         # Translate voice recording to text
         # Save the translated text to a different table (CaseVoiceRecordingTranslation)
-        # The table should have foreign key to CaseeMedia and a TranslatedText field
+        # The table should have foreign key to CaseMedia and a TranslatedText field
         pass
 
     def translateMessageVoiceRecording(self, voiceRecording, relatedMessage):

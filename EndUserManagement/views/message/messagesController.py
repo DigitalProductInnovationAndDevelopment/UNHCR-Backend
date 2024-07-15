@@ -5,10 +5,10 @@ import uuid
 
 from rest_framework.response import Response
 
-from EndUserManagement.models import User, Case, Message
+from EndUserManagement.models import Case, Message
 from EndUserManagement.serializers.inputValidators import MessageCreateValidator
 from EndUserManagement.serializers.responseSerializers import MessageListResponseSerializer, MessageCreateResponseSerializer
-from EndUserManagement.services import MediaService
+from EndUserManagement.services import MediaService, TranscriptionService
 from UNHCR_Backend.services import (
     PaginationService,
     TranslationService,
@@ -27,6 +27,7 @@ logger = logging.getLogger(__name__)
 paginationService = PaginationService()
 translationService = TranslationService()
 mediaService = MediaService()
+transcriptionService = TranscriptionService()
 
 # Create your views here.
 @api_view(["GET", "POST"])
@@ -119,7 +120,7 @@ def messagesController(request, id, **kwargs):
             if voiceRecordingsList:
                 for voiceRecording in voiceRecordingsList:
                     voiceRecordingId = mediaService.saveMessageMedia(voiceRecording, newMessage)
-                    translationService.translateMessageVoiceRecording(voiceRecording, newMessage)
+                    transcriptionService.transcribeMessageMedia(voiceRecording, newMessage)
                     savedVoiceRecordingIds.append(voiceRecordingId)  
             responseSerializer = MessageCreateResponseSerializer(newMessage)
             responseDict = responseSerializer.data.copy()

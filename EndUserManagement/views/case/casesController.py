@@ -8,7 +8,7 @@ from UNHCR_Backend.services import (
     PaginationService,
     TranslationService,
 )
-from EndUserManagement.services import CaseService, MediaService
+from EndUserManagement.services import CaseService, MediaService, TranscriptionService
 from EndUserManagement.serializers.inputValidators import CaseCreateValidator, CaseListValidator
 from EndUserManagement.serializers.responseSerializers import CaseListResponseSerializer, CaseCreateResponseSerializer
 from UNHCR_Backend.services import RequestService
@@ -23,6 +23,7 @@ logger = logging.getLogger(__name__)
 # Create instances of services
 paginationService = PaginationService()
 translationService = TranslationService()
+transcriptionService = TranscriptionService()
 caseService = CaseService()
 mediaService = MediaService()
 requestService = RequestService()
@@ -169,7 +170,7 @@ def casesController(request, **kwargs):
             if voiceRecordingsList:
                 for voiceRecording in voiceRecordingsList:
                     voiceRecordingId = mediaService.saveCaseMedia(voiceRecording, newCase)
-                    translationService.translateCaseVoiceRecording(voiceRecording, newCase)
+                    transcriptionService.transcribeCaseMedia(voiceRecording, newCase)
                     savedVoiceRecordingIds.append(voiceRecordingId)  
             responseSerializer = CaseCreateResponseSerializer(newCase)
             responseDict = responseSerializer.data.copy()
