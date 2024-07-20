@@ -10,6 +10,7 @@ from django.forms.models import model_to_dict
 
 from rest_framework import status
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework_simplejwt.exceptions import TokenError, InvalidToken
 
 
 JWT_authenticator = JWTAuthentication()
@@ -68,11 +69,22 @@ class AuthMiddleware:
 
             return None
 
-        except customAuthTokenException as e:
-            logger.error(traceback.format_exc())
+        except InvalidToken as e:
             return JsonResponse(
-                {"success": False, "message": str(e)},
+                {
+                    "success": False,
+                    "message": "The provided token is invalid or expired.",
+                },
                 status=status.HTTP_401_UNAUTHORIZED,
+            )
+        
+        except TokenError as e:
+            return JsonResponse(
+                {
+                    "success": False,
+                    "message": str(e),
+                },
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         except Exception as e:
