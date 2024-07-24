@@ -119,8 +119,8 @@ def messagesController(request, id, **kwargs):
                     savedFileIds.append(fileId)
             if voiceRecordingsList:
                 for voiceRecording in voiceRecordingsList:
-                    voiceRecordingId = mediaService.saveMessageMedia(voiceRecording, newMessage)
-                    transcriptionService.transcribeMessageMedia(voiceRecording, newMessage)
+                    voiceRecordingId, newMediaObj = mediaService.saveMessageMedia(voiceRecording, newMessage)
+                    transcriptionService.transcribeMessageMedia(newMediaObj)
                     savedVoiceRecordingIds.append(voiceRecordingId)  
             responseSerializer = MessageCreateResponseSerializer(newMessage)
             responseDict = responseSerializer.data.copy()
