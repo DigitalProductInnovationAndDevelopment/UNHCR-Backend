@@ -43,7 +43,7 @@ class MediaService:
         self.saveMediaFileToStorage(file, mediaStoragePath, file.name, fileUuidHex)
         newMediaObj = mediaObjClass(**mediaObjCreateDict)
         newMediaObj.save()
-        return newMediaObj.ID.hex
+        return newMediaObj.ID.hex, newMediaObj
         
     def saveMediaFileToStorage(self, file, mediaStoragePath, fileName, uuid):
         saveDirectory = os.path.join(self.coreAppDir, mediaStoragePath, uuid)
