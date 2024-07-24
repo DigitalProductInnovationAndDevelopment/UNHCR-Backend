@@ -1,5 +1,6 @@
 import os
 import whisper
+import numpy as np
 from EndUserManagement.models import MessageMedia, CaseMedia, CaseMediaTranscription, MessageMediaTranscription
 
 class TranscriptionService:
@@ -12,13 +13,24 @@ class TranscriptionService:
     def speechToText(self, media_path):
         # Load and transcribe the audio file from a path
         audio_path = os.path.join(self.coreAppDir, media_path)
-        result = self.model.transcribe(audio_path)
+        result = self.model.transcribe(audio_path, fp16=False)
         return result['text'], result['language']
 
     def speechToTextFromFile(self, voice_recording):
-        # Load and transcribe the audio file from an in-memory file
-        result = self.model.transcribe(voice_recording)
+        # Convert InMemoryUploadedFile to a floating point NumPy array
+        audio_fp = self._convert_to_float32(voice_recording)
+        # Transcribe using the model
+        result = self.model.transcribe(audio_fp, fp16=False)
         return result['text'], result['language']
+
+    def _convert_to_float32(self, voice_recording):
+        # Read file content into bytes
+        audio_bytes = voice_recording.read()
+        # Convert bytes to NumPy array
+        audio_np = np.frombuffer(audio_bytes, dtype=np.int16)
+        # Convert to float32 and normalize the audio
+        audio_fp = audio_np.astype(np.float32) / np.iinfo(np.int16).max
+        return audio_fp
 
     def transcribeCaseMedia(self, voice_recording, case_media):
         try:
