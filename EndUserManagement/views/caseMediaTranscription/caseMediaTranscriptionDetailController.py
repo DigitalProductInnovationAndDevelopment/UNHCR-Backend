@@ -65,7 +65,7 @@ def caseMediaTranscriptionDetailController(request, caseId, mediaId, caseMediaTr
         """
         try:
             return Response(
-                {"success": True, "transcription": caseMediaTranscription.TranscriptionText},
+                {"success": True, "transcription": caseMediaTranscription.TranscriptionText, "language": caseMediaTranscription.Language},
                 status=status.HTTP_200_OK
             )
 

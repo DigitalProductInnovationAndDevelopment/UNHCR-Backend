@@ -9,6 +9,7 @@ class MessageMediaTranscription(TimestampAbstractModel):
     ID = models.UUIDField(primary_key=True, db_column='ID', default=uuid.uuid4, editable=False)
     MessageMedia = models.OneToOneField(MessageMedia, db_column='MessageMedia', on_delete=models.SET_NULL, null=True, blank=True)
     TranscriptionText = models.TextField()
+    Language = models.TextField()
 
     class Meta:
         db_table = 'MessageMediaTranscription'

@@ -13,23 +13,24 @@ class TranscriptionService:
         # Load and transcribe the audio file from a path
         audio_path = os.path.join(self.coreAppDir, media_path)
         result = self.model.transcribe(audio_path)
-        return result['text']
+        return result['text'], result['language']
 
     def speechToTextFromFile(self, voice_recording):
         # Load and transcribe the audio file from an in-memory file
         result = self.model.transcribe(voice_recording)
-        return result['text']
+        return result['text'], result['language']
 
     def transcribeCaseMedia(self, voice_recording, case_media):
         try:
-            transcription_text = self.speechToTextFromFile(voice_recording)
+            transcription_text, detected_language = self.speechToTextFromFile(voice_recording)
 
             case_media_transcription, created = CaseMediaTranscription.objects.get_or_create(
                 CaseMedia=case_media,
-                defaults={'TranscriptionText': transcription_text}
+                defaults={'TranscriptionText': transcription_text, 'Language': detected_language}
             )
             if not created:
                 case_media_transcription.TranscriptionText = transcription_text
+                case_media_transcription.Language = detected_language
                 case_media_transcription.save()
 
             return transcription_text
@@ -38,14 +39,15 @@ class TranscriptionService:
 
     def transcribeMessageMedia(self, voice_recording, message_media):
         try:
-            transcription_text = self.speechToTextFromFile(voice_recording)
+            transcription_text, detected_language = self.speechToTextFromFile(voice_recording)
 
             message_media_transcription, created = MessageMediaTranscription.objects.get_or_create(
                 MessageMedia=message_media,
-                defaults={'TranscriptionText': transcription_text}
+                defaults={'TranscriptionText': transcription_text, 'Language': detected_language}
             )
             if not created:
                 message_media_transcription.TranscriptionText = transcription_text
+                message_media_transcription.Language = detected_language
                 message_media_transcription.save()
 
             return transcription_text

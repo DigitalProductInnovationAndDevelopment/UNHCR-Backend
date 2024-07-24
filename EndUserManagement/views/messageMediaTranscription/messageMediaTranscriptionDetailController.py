@@ -64,7 +64,7 @@ def messageMediaTranscriptionDetailController(request, messageId, mediaId, messa
         """
         try:
             return Response(
-                {"success": True, "transcription": messageMediaTranscription.TranscriptionText},
+                {"success": True, "transcription": messageMediaTranscription.TranscriptionText, "language": messageMediaTranscription.Language},
                 status=status.HTTP_200_OK
             )
 
