@@ -59,15 +59,19 @@ class MediaService:
     
     def getCaseMediaFileAsFileResponse(self, caseMedia):
         return self.getMediaFileAsFileResponse(caseMedia, 'case', customCaseMediaException)
-    
-    def getMediaFileAsFileResponse(self, mediaInstance, mediaType = 'case', exceptionClass = customCaseMediaException):
+
+    def getFilePath(self, mediaInstance, mediaType):
         folderName = mediaInstance.ID.hex
         fileName = mediaInstance.MediaName
         if mediaType == 'case':
             mediaStoragePath = self.caseMediaStoragePath
         else:
             mediaStoragePath = self.messageMediaStoragePath
-        fileDirectory = os.path.join(self.coreAppDir, mediaStoragePath, folderName, fileName)
+        return os.path.join(self.coreAppDir, mediaStoragePath, folderName, fileName)
+    
+    def getMediaFileAsFileResponse(self, mediaInstance, mediaType = 'case', exceptionClass = customCaseMediaException):
+        fileName = mediaInstance.MediaName
+        fileDirectory = self.getFilePath(mediaInstance, mediaType)
         if not os.path.exists(fileDirectory):
             raise customCaseMediaException(translationService.translate(f'{mediaType}.media.not.exist'))
         # content_type is octet-stream for now, but we can change it with messageMedia.MediaType
