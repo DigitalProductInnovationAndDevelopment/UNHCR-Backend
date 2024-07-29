@@ -2,7 +2,9 @@ from rest_framework import serializers
 
 from EndUserManagement.models import User
 
-class AdminUserCreateValidator(serializers.ModelSerializer):
+from . import CustomModelSerializer
+
+class AdminUserCreateValidator(CustomModelSerializer):
     class Meta:
         model = User
         exclude = ['ID', 'CreatedAt', 'UpdatedAt']

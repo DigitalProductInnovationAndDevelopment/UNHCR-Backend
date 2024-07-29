@@ -2,7 +2,9 @@ from rest_framework import serializers
 
 from EndUserManagement.models import User
 
-class SignUpValidator(serializers.ModelSerializer):
+from . import CustomModelSerializer
+
+class SignUpValidator(CustomModelSerializer):
     Password = serializers.CharField(max_length = 20)
 
     class Meta:

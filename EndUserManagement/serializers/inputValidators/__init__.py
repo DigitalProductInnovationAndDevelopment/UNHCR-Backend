@@ -1,3 +1,4 @@
+from .customModelSerializer import CustomModelSerializer
 from .messageCreateValidator import MessageCreateValidator
 from .signUpValidator import SignUpValidator
 from .caseListValidator import CaseListValidator

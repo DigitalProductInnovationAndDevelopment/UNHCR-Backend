@@ -16,6 +16,7 @@ class TranslationService:
             "message.not.exist": {"en-us": "The message does not exist."},
             "message.media.not.exist": {"en-us": "The message media does not exist."},
             "case.media.not.exist": {"en-us": "The case media does not exist."},
+            "general.exception.message": {"en-us": "Something went wrong. Please try again later."},
             "": {"en-us": ""},
         }
 

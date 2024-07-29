@@ -54,8 +54,8 @@ def userDetailController(request, id, **kwargs):
         except Exception as e:
             logger.error(traceback.format_exc())
             return Response(
-                {"success": False, "message": str(e)},
-                status=status.HTTP_400_BAD_REQUEST,
+                {"success": False, "message": translationService.translate('general.exception.message')},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
     elif request.method == "PATCH":
@@ -111,8 +111,8 @@ def userDetailController(request, id, **kwargs):
         except Exception as e:
             logger.error(traceback.format_exc())
             return Response(
-                {"success": False, "message": str(e)},
-                status=status.HTTP_400_BAD_REQUEST,
+                {"success": False, "message": translationService.translate('general.exception.message')},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
     elif request.method == "DELETE":
@@ -126,16 +126,18 @@ def userDetailController(request, id, **kwargs):
                 {"success": True, "message": translationService.translate("user.delete.successful")},
                 status=status.HTTP_200_OK,
             )
+        
         except User.DoesNotExist:
             return Response(
                 {"success": False, "message": translationService.translate("user.not.exist")},
                 status=status.HTTP_404_NOT_FOUND,
             )
+        
         except Exception as e:
             logger.error(traceback.format_exc())
             return Response(
-                {"success": False, "message": str(e)},
-                status=status.HTTP_400_BAD_REQUEST,
+                {"success": False, "message": translationService.translate('general.exception.message')},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
     else:
