@@ -2,6 +2,10 @@ import os
 
 from distutils.util import strtobool
 
+coreAppDir = os.getcwd()
+dummyFilesRelativePath = "EndUserManagement/dummyData/files"
+dummyFilesStoragePath = os.path.join(coreAppDir, dummyFilesRelativePath)
+
 dummyCases = {
     "Ali": [],
     "Eduard": [
@@ -12,7 +16,47 @@ dummyCases = {
             "to survive. My mother is pregnant and needs medical assistance as well. We don't speak Romanian and don't know where to get assistance.",
             "Status": "OPEN",
             "CaseTypes": ["Cash assistance", "Shelter support", "Health support", "NFI support"],
-            "PsnTypes": ["Pregnant woman"]
+            "PsnTypes": ["Pregnant woman"],
+            "File": [
+                os.path.join(dummyFilesStoragePath, "Dummy_Case_Document.pdf"),
+                os.path.join(dummyFilesStoragePath, "Dummy_Case_Image.png")
+            ],
+            "VoiceRecording": [
+                os.path.join(dummyFilesStoragePath, "Dummy_Case_Voice_Recording.mp3")
+            ],
+            "Messages": [
+                {
+                    "TextMessage": "Hello",
+                    "HasMedia": False,
+                    "SenderRole": "User"
+                },
+                {
+                    "TextMessage": "Hi. How can I help you?",
+                    "HasMedia": False,
+                    "SenderRole": "Case Supporter"
+                },
+                {
+                    "TextMessage": "Can you examine this document about my case?",
+                    "HasMedia": True,
+                    "SenderRole": "User",
+                    "File": [
+                        os.path.join(dummyFilesStoragePath, "Dummy_Message_Document.pdf")
+                    ]
+                },
+                {
+                    "TextMessage": "I will check it out. Thanks",
+                    "HasMedia": False,
+                    "SenderRole": "Case Supporter"
+                },
+                {
+                    "TextMessage": None,
+                    "HasMedia": True,
+                    "SenderRole": "User",
+                    "VoiceRecording": [
+                        os.path.join(dummyFilesStoragePath, "Dummy_Message_Voice_Recording.mp3")
+                    ]
+                }
+            ]
         }
     ],
     "Dilshad": [
