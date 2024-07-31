@@ -10,9 +10,10 @@ from django.db import connection
 from EndUserManagement.models import User, Case, Message, CaseType, PsnType
 from EndUserManagement.models.modelChoices import caseTypeChoices, psnTypeChoices
 from EndUserManagement.dummyData import getDummyUsers, getDummyCases
-from EndUserManagement.services import MediaService
+from EndUserManagement.services import MediaService, MessageService
 
 mediaService = MediaService()
+messageService = MessageService()
 
 # Simulating a file upload. Behaving like the dummy data file is uploaded by the end user
 def createInMemoryUploadedFile(filePath):
@@ -108,6 +109,7 @@ class Command(BaseCommand):
                                 keysToExtract = ["File", "VoiceRecording"]
                                 for keyToExtract in keysToExtract:
                                     messageCreateDict.pop(keyToExtract, None)
+                                messageCreateDict["TextMessage"] = messageService.encryptStringMessage(dummyUser.EmailAddress, messageCreateDict["TextMessage"])
                                 dummyMessage = Message(Case = dummyCase, **messageCreateDict)
                                 dummyMessage.save()
                                 # Attaching the dummy files to the dummy message

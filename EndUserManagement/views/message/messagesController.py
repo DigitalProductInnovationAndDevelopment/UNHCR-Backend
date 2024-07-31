@@ -8,7 +8,8 @@ from rest_framework.response import Response
 from EndUserManagement.models import User, Case, Message
 from EndUserManagement.serializers.inputValidators import MessageCreateValidator
 from EndUserManagement.serializers.responseSerializers import MessageListResponseSerializer, MessageCreateResponseSerializer
-from EndUserManagement.services import MediaService
+from EndUserManagement.services import MediaService, MessageService
+
 from UNHCR_Backend.services import (
     PaginationService,
     TranslationService,
@@ -27,6 +28,7 @@ logger = logging.getLogger(__name__)
 paginationService = PaginationService()
 translationService = TranslationService()
 mediaService = MediaService()
+messageService = MessageService()
 
 # Create your views here.
 @api_view(["GET", "POST"])
@@ -103,8 +105,10 @@ def messagesController(request, id, **kwargs):
             filesList = validatedData["File"]
             voiceRecordingsList = validatedData["VoiceRecording"]
             messageHasMedia = False
-            if filesList:
+            if filesList or voiceRecordingsList:
                 messageHasMedia = True
+            # Encrypt the text message before saving it to the DB
+            validatedData["TextMessage"] = messageService.encryptStringMessage(user.EmailAddress, validatedData["TextMessage"])
             newMessage = Message(Case = case,
                                  TextMessage = validatedData["TextMessage"],
                                  HasMedia = messageHasMedia,
