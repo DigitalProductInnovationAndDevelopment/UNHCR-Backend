@@ -28,7 +28,7 @@ def caseDetailController(request, id, **kwargs):
     user = kwargs["loggedUser"]
     try:
         case = Case.objects.get(ID=id)
-        # The case for uesr trying to operate on a case which does not belong to him/her
+        # The case for user trying to operate on a case which does not belong to him/her
         if user.ID != case.User.ID:
             return Response(
                     {"success": False, "message": translationService.translate("HTTP.not.authorized")},
@@ -56,8 +56,8 @@ def caseDetailController(request, id, **kwargs):
         except Exception as e:
             logger.error(traceback.format_exc())
             return Response(
-                {"success": False, "message": str(e)},
-                status=status.HTTP_400_BAD_REQUEST,
+                {"success": False, "message": translationService.translate('general.exception.message')},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
     elif request.method == "PATCH":
@@ -100,8 +100,8 @@ def caseDetailController(request, id, **kwargs):
         except Exception as e:
             logger.error(traceback.format_exc())
             return Response(
-                {"success": False, "message": str(e)},
-                status=status.HTTP_400_BAD_REQUEST,
+                {"success": False, "message": translationService.translate('general.exception.message')},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
     elif request.method == "DELETE":
@@ -119,8 +119,8 @@ def caseDetailController(request, id, **kwargs):
         except Exception as e:
             logger.error(traceback.format_exc())
             return Response(
-                {"success": False, "message": str(e)},
-                status=status.HTTP_400_BAD_REQUEST,
+                {"success": False, "message": translationService.translate('general.exception.message')},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
     else:

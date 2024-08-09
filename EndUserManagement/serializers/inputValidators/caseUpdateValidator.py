@@ -1,8 +1,10 @@
 from rest_framework import serializers
 
-from EndUserManagement.models import Case, User
+from EndUserManagement.models import Case
+
+from . import CustomModelSerializer
     
-class CaseUpdateValidator(serializers.ModelSerializer):
+class CaseUpdateValidator(CustomModelSerializer):
     class Meta:
         model = Case
         # Since CaseTypes field is required by model definition, empty list submission not allowed by the serializer

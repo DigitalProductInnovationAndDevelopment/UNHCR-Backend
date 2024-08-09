@@ -16,7 +16,11 @@ class TranslationService:
             "userDevice.update.successful": {"en-us": "The user device has been successfully updated."},
             "userDevice.delete.successful": {"en-us": "The user device has been successfully deleted."},
             "userDevice.not.exist": {"en-us": "The user device does not exist."},
-            "": {"en-us": ""},
+            "message.not.exist": {"en-us": "The message does not exist."},
+            "message.media.not.exist": {"en-us": "The message media does not exist."},
+            "case.media.not.exist": {"en-us": "The case media does not exist."},
+            "general.exception.message": {"en-us": "Something went wrong. Please try again later."},
+            "": {"en-us": ""}
         }
 
     def translate(self, translationKey, userLanguageISOCode="en-us"):
@@ -24,3 +28,15 @@ class TranslationService:
             return self.translationMap[translationKey][userLanguageISOCode]
         else:
             raise Exception("Translation for the message is not found.")
+        
+    def translateCaseVoiceRecording(self, voiceRecording, relatedCase):
+        # Translate voice recording to text
+        # Save the translated text to a different table (CaseVoiceRecordingTranslation)
+        # The table should have foreign key to CaseeMedia and a TranslatedText field
+        pass
+
+    def translateMessageVoiceRecording(self, voiceRecording, relatedMessage):
+        # Translate voice recording to text
+        # Save the translated text to a different table (MessageVoiceRecordingTranslation)
+        # The table should have foreign key to MessageMedia and a TranslatedText field
+        pass

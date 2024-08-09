@@ -8,15 +8,14 @@ from UNHCR_Backend.services import (
     PaginationService,
     TranslationService,
 )
-from EndUserManagement.services import CaseService
+from EndUserManagement.services import CaseService, MediaService
 from EndUserManagement.serializers.inputValidators import CaseCreateValidator, CaseListValidator
 from EndUserManagement.serializers.responseSerializers import CaseListResponseSerializer, CaseCreateResponseSerializer
+from UNHCR_Backend.services import RequestService
 
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view
-
-from rest_framework import serializers
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
@@ -25,6 +24,8 @@ logger = logging.getLogger(__name__)
 paginationService = PaginationService()
 translationService = TranslationService()
 caseService = CaseService()
+mediaService = MediaService()
+requestService = RequestService()
 
 # Create your views here.
 @api_view(["GET", "POST"])
@@ -114,22 +115,30 @@ def casesController(request, **kwargs):
         except Exception as e:
             logger.error(traceback.format_exc())
             return Response(
-                {"success": False, "message": str(e)},
-                status=status.HTTP_400_BAD_REQUEST,
+                {"success": False, "message": translationService.translate('general.exception.message')},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
     elif request.method == "POST":
         """
         Creates a case.
+        This request's body should be the type form-data.
         @Endpoint: /cases
         @BodyParam: Coverage (String ("INDIVIDUAL" OR "HOUSEHOLD"), REQUIRED) (Coverage for the new case)
         @BodyParam: Description (String, REQUIRED) (Text description for the new case)
-        @BodyParam: CaseTypes (String, REQUIRED, LIST) (IDs of the case types.)
-        @BodyParam: PsnTypes (String, OPTIONAL, LIST) (IDs of the case types.)
+        @BodyParam: CaseTypes (String, REQUIRED, MULTIPLE) (IDs of the case types.)
+        @BodyParam: PsnTypes (String, OPTIONAL, MULTIPLE) (IDs of the case types.)
+        @BodyParam: File (File, OPTIONAL, MULTIPLE) (Files related to the case.)
+        @BodyParam: VoiceRecording (File, OPTIONAL) (The voice recording attached to the message)
         """
         try:
-            requestBody = json.loads(request.body)
-            paramValidator = CaseCreateValidator(data=requestBody)
+            # Transforming form data request body to dictionary
+            requestBody = requestService.transformFormDataToDict(request)
+            requestBody.update({
+                "File": request.FILES.getlist('File'),
+                "VoiceRecording": request.FILES.getlist('VoiceRecording')
+            })
+            paramValidator = CaseCreateValidator(data = requestBody)
             isParamsValid = paramValidator.is_valid(raise_exception=False)
             # The case for body param(s) not being as they should be
             if not isParamsValid:
@@ -139,26 +148,44 @@ def casesController(request, **kwargs):
                 )
             validatedData = paramValidator.validated_data
             caseCreateDict = validatedData.copy()
-            caseCreateDict.pop("CaseTypes", None)
-            caseCreateDict.pop("PsnTypes", None)
-            initialStatus = "OPEN"
+            for key in ['CaseTypes', 'PsnTypes', 'File', 'VoiceRecording']: 
+                caseCreateDict.pop(key, None)
+            initialStatus = "REQUEST RECEIVED"
             newCase = Case(User = user, Status = initialStatus, **caseCreateDict)
             newCase.save()
             if "CaseTypes" in validatedData:
                 newCase.CaseTypes.set(validatedData["CaseTypes"])
             if "PsnTypes" in validatedData:
                 newCase.PsnTypes.set(validatedData["PsnTypes"])
+            # Returns empty list if there are no files submitted under the key 'File'
+            filesList = validatedData["File"]
+            voiceRecordingsList = validatedData["VoiceRecording"]
+            savedFileIds = []
+            savedVoiceRecordingIds = []
+            if filesList:
+                for file in filesList:
+                    fileId = mediaService.saveCaseMedia(file, newCase)
+                    savedFileIds.append(fileId)
+            if voiceRecordingsList:
+                for voiceRecording in voiceRecordingsList:
+                    voiceRecordingId = mediaService.saveCaseMedia(voiceRecording, newCase)
+                    translationService.translateCaseVoiceRecording(voiceRecording, newCase)
+                    savedVoiceRecordingIds.append(voiceRecordingId)  
             responseSerializer = CaseCreateResponseSerializer(newCase)
+            responseDict = responseSerializer.data.copy()
+            responseDict["Files"] = savedFileIds
+            responseDict['VoiceRecordings'] = savedVoiceRecordingIds
+
             return Response(
-                {"success": True, "data": responseSerializer.data},
+                {"success": True, "data": responseDict},
                 status=status.HTTP_201_CREATED,
             )
 
         except Exception as e:
             logger.error(traceback.format_exc())
             return Response(
-                {"success": False, "message": str(e)},
-                status=status.HTTP_400_BAD_REQUEST,
+                {"success": False, "message": translationService.translate('general.exception.message')},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
     else:

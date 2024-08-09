@@ -10,10 +10,15 @@ from django.forms.models import model_to_dict
 
 from rest_framework import status
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework_simplejwt.exceptions import TokenError, InvalidToken
 
+from UNHCR_Backend.services import (
+    TranslationService
+)
 
 JWT_authenticator = JWTAuthentication()
 
+translationService = TranslationService()
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
@@ -68,16 +73,27 @@ class AuthMiddleware:
 
             return None
 
-        except customAuthTokenException as e:
-            logger.error(traceback.format_exc())
+        except InvalidToken as e:
             return JsonResponse(
-                {"success": False, "message": str(e)},
+                {
+                    "success": False,
+                    "message": "The provided token is invalid or expired.",
+                },
                 status=status.HTTP_401_UNAUTHORIZED,
+            )
+        
+        except TokenError as e:
+            return JsonResponse(
+                {
+                    "success": False,
+                    "message": str(e),
+                },
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         except Exception as e:
             logger.error(traceback.format_exc())
             return JsonResponse(
-                {"success": False, "message": str(e)},
-                status=status.HTTP_400_BAD_REQUEST,
+                {"success": False, "message": translationService.translate('general.exception.message')},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )

@@ -1,0 +1,2 @@
+class customMessageMediaException(Exception):
+    pass

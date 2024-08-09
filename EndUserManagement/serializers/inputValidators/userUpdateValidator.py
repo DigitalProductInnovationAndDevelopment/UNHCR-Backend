@@ -1,8 +1,10 @@
 from rest_framework import serializers
 
 from EndUserManagement.models import User
+
+from . import CustomModelSerializer
     
-class UserUpdateValidator(serializers.ModelSerializer):
+class UserUpdateValidator(CustomModelSerializer):
     class Meta:
         model = User
         # These fields should not be updated by the end user

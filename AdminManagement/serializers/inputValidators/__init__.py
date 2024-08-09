@@ -1,3 +1,4 @@
+from .customModelSerializer import CustomModelSerializer
 from .adminCaseCreateValidator import AdminCaseCreateValidator
 from .adminCaseListValidator import AdminCaseListValidator
 from .adminCaseUpdateValidator import AdminCaseUpdateValidator
