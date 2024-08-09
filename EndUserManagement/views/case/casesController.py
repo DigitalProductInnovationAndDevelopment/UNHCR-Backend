@@ -150,7 +150,7 @@ def casesController(request, **kwargs):
             caseCreateDict = validatedData.copy()
             for key in ['CaseTypes', 'PsnTypes', 'File', 'VoiceRecording']: 
                 caseCreateDict.pop(key, None)
-            initialStatus = "OPEN"
+            initialStatus = "REQUEST RECEIVED"
             newCase = Case(User = user, Status = initialStatus, **caseCreateDict)
             newCase.save()
             if "CaseTypes" in validatedData:

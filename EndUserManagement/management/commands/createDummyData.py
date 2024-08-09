@@ -54,17 +54,6 @@ class Command(BaseCommand):
             dummyCases = getDummyCases()
             dummyPwd = "1234567"
 
-            # Creating the PSN and Case types
-            if not CaseType.objects.all():
-                for caseTypeChoice in caseTypeChoices:
-                    newCaseType = CaseType(name = caseTypeChoice[0])
-                    newCaseType.save()
-
-            if not PsnType.objects.all():
-                for psnTypeChoice in psnTypeChoices:
-                    newPsnType = PsnType(name = psnTypeChoice[0])
-                    newPsnType.save()
-
             for dummyUserInfo in dummyUsers:
                 dummyUser = User(**dummyUserInfo)
                 dummyUser.set_password(dummyPwd)

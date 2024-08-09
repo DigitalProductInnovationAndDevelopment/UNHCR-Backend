@@ -27,7 +27,7 @@ class CaseCreateValidator(CustomModelSerializer):
         exclude = ['User', 'Status', 'UpdatedAt', 'CreatedAt']
 
     # This function makes the CaseTypes and PsnTypes values list if they are not.
-    # Manyy to many field input should be a list of IDs as default for DRF serializers.
+    # Many to many field input should be a list of IDs as default for DRF serializers.
     def to_internal_value(self, data):
         if 'CaseTypes' in data and not isinstance(data['CaseTypes'], list):
             data['CaseTypes'] = [data['CaseTypes']]
