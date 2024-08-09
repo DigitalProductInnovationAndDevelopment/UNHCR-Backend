@@ -7,6 +7,7 @@ done
 
 python manage.py makemigrations
 python manage.py migrate
+python manage.py createDummyData
 
 # If DB is empty, open these commands to insert fixture data to DB
 echo "Inserting fixture data.."

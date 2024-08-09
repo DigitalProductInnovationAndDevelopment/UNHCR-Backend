@@ -2,6 +2,7 @@ from django.urls import path
 from rest_framework.urlpatterns import format_suffix_patterns
 
 from .views.user import *
+from .views.userDevice import *
 from .views.case import *
 from .views.login import *
 from .views.message import *
@@ -19,4 +20,6 @@ urlpatterns = [
     path("api/cases/<int:caseId>/case-media/<str:mediaId>", caseMediaDetailController, name="caseMediaDetail"),
     path("api/users", usersController, name="users"),
     path("api/users/<int:id>", userDetailController, name="userDetail"),
+    path("api/user-devices", userDevicesController, name="userDevices"),
+    path("api/user-devices/<int:id>", userDeviceDetailController, name="userDevicesDetail"),
 ]

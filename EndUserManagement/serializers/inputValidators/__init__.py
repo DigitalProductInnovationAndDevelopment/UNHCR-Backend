@@ -6,3 +6,5 @@ from .caseUpdateValidator import CaseUpdateValidator
 from .userUpdateValidator import UserUpdateValidator
 from .loginValidator import LoginValidator
 from .caseCreateValidator import CaseCreateValidator
+from .userDeviceCreateValidator import UserDeviceCreateValidator
+from .userDeviceUpdateValidator import UserDeviceUpdateValidator

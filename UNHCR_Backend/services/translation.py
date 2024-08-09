@@ -12,12 +12,15 @@ class TranslationService:
             "user.not.authenticated": {"en-us": "Authentication not successful. Check the email and password and try again."},
             "user.not.exist": {"en-us": "The user does not exist."},
             "user.update.successful": {"en-us": "The user has been successfully updated."},
-            'user.not.authenticated': {"en-us": "Authentication not successful. Check the email and password and try again."},
+            "userDevice.create.successful": {"en-us": "The user device has been successfully created."},
+            "userDevice.update.successful": {"en-us": "The user device has been successfully updated."},
+            "userDevice.delete.successful": {"en-us": "The user device has been successfully deleted."},
+            "userDevice.not.exist": {"en-us": "The user device does not exist."},
             "message.not.exist": {"en-us": "The message does not exist."},
             "message.media.not.exist": {"en-us": "The message media does not exist."},
             "case.media.not.exist": {"en-us": "The case media does not exist."},
             "general.exception.message": {"en-us": "Something went wrong. Please try again later."},
-            "": {"en-us": ""},
+            "": {"en-us": ""}
         }
 
     def translate(self, translationKey, userLanguageISOCode="en-us"):

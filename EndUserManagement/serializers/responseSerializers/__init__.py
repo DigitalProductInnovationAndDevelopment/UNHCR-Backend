@@ -6,3 +6,5 @@ from .messageCreateResponseSerializer import MessageCreateResponseSerializer
 from .messageListResponseSerializer import MessageListResponseSerializer
 from .userGetResponseSerializer import UserGetResponseSerializer
 from .userUpdateResponseSerializer import UserUpdateResponseSerializer
+from .userDeviceListResponseSerializer import UserDeviceListResponseSerializer
+from .userDeviceGetResponseSerializer import UserDeviceGetResponseSerializer
