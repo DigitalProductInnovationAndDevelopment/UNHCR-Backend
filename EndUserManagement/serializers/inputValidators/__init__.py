@@ -5,6 +5,7 @@ from .caseListValidator import CaseListValidator
 from .caseUpdateValidator import CaseUpdateValidator
 from .userUpdateValidator import UserUpdateValidator
 from .loginValidator import LoginValidator
+from .caseCreateFeedbackCreateValidator import CaseCreateFeedbackCreateValidator
 from .caseCreateValidator import CaseCreateValidator
 from .userDeviceCreateValidator import UserDeviceCreateValidator
 from .userDeviceUpdateValidator import UserDeviceUpdateValidator

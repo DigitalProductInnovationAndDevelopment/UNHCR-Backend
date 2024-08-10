@@ -50,6 +50,14 @@ vulnerabilityCategoryChoices = [
     ("HIGH RISK", "High Risk"),
 ]
 
+caseFeedbackRatingChoices = [
+    (1, 'One'),
+    (2, 'Two'),
+    (3, 'Three'),
+    (4, 'Four'),
+    (5, 'Five'),
+]
+
 userCountryOfAsylumChoices = [
     ("Afghanistan", "افغانستانAfghanestan"),
     ("Albania", "Shqipëria"),
