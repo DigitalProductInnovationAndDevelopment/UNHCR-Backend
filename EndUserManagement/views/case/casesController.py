@@ -157,6 +157,12 @@ def casesController(request, **kwargs):
                 newCase.CaseTypes.set(validatedData["CaseTypes"])
             if "PsnTypes" in validatedData:
                 newCase.PsnTypes.set(validatedData["PsnTypes"])
+            # Calculating and setting the vulnerability score for household cases
+            if newCase.Coverage == "HOUSEHOLD":
+                vulnerabilityScore, vulnerabilityCategory = caseService.calcCaseVulnerabilityScore(newCase)
+                newCase.VulnerabilityScore = vulnerabilityScore
+                newCase.VulnerabilityCategory = vulnerabilityCategory
+                newCase.save()
             # Returns empty list if there are no files submitted under the key 'File'
             filesList = validatedData["File"]
             voiceRecordingsList = validatedData["VoiceRecording"]

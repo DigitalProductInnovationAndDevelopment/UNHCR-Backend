@@ -10,10 +10,11 @@ from django.db import connection
 from EndUserManagement.models import User, Case, Message, CaseType, PsnType
 from EndUserManagement.models.modelChoices import caseTypeChoices, psnTypeChoices
 from EndUserManagement.dummyData import getDummyUsers, getDummyCases
-from EndUserManagement.services import MediaService, MessageService
+from EndUserManagement.services import MediaService, MessageService, CaseService
 
 mediaService = MediaService()
 messageService = MessageService()
+caseService = CaseService()
 
 # Simulating a file upload. Behaving like the dummy data file is uploaded by the end user
 def createInMemoryUploadedFile(filePath):
@@ -77,6 +78,12 @@ class Command(BaseCommand):
                         chosenPsnTypes = PsnType.objects.filter(name__in = dummyCaseInfo["PsnTypes"])
                         for chosenPsnType in chosenPsnTypes:
                             dummyCase.PsnTypes.add(chosenPsnType)
+                        # Calculating and setting the vulnerability score for household cases
+                        if dummyCase.Coverage == "HOUSEHOLD":
+                            vulnerabilityScore, vulnerabilityCategory = caseService.calcCaseVulnerabilityScore(dummyCase)
+                            dummyCase.VulnerabilityScore = vulnerabilityScore
+                            dummyCase.VulnerabilityCategory = vulnerabilityCategory
+                            dummyCase.save()
                         # Attaching the dummy files
                         filesPaths = dummyCaseInfo["File"] if "File" in dummyCaseInfo else None
                         if filesPaths:

@@ -44,6 +44,12 @@ userGenderChoices = [
     ("OTHER", "Other")
 ]
 
+vulnerabilityCategoryChoices = [
+    ("LOW RISK", "Low Risk"),
+    ("MODERATE RISK", "Moderate Risk"),
+    ("HIGH RISK", "High Risk"),
+]
+
 userCountryOfAsylumChoices = [
     ("Afghanistan", "افغانستانAfghanestan"),
     ("Albania", "Shqipëria"),

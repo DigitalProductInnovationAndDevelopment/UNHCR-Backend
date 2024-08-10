@@ -22,9 +22,9 @@ class CaseCreateValidator(CustomModelSerializer):
 
     class Meta:
         model = Case
-        # Status is not required because it will be OPEN initially
+        # Status is not required because it will be REQUEST RECEIVED initially
         # User is not required because it is always logged in user for the end user
-        exclude = ['User', 'Status', 'UpdatedAt', 'CreatedAt']
+        exclude = ['User', 'Status', 'UpdatedAt', 'CreatedAt', 'VulnerabilityCategory', 'VulnerabilityScore']
 
     # This function makes the CaseTypes and PsnTypes values list if they are not.
     # Many to many field input should be a list of IDs as default for DRF serializers.

@@ -8,7 +8,7 @@ class CaseUpdateValidator(CustomModelSerializer):
     class Meta:
         model = Case
         # Since CaseTypes field is required by model definition, empty list submission not allowed by the serializer
-        exclude = ['ID', 'User', 'Status', 'UpdatedAt', 'CreatedAt']
+        exclude = ['ID', 'User', 'Status', 'UpdatedAt', 'CreatedAt', 'VulnerabilityCategory', 'VulnerabilityScore']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

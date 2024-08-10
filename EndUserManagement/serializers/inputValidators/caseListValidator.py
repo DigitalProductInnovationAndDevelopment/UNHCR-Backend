@@ -15,7 +15,7 @@ class CaseListValidator(CustomModelSerializer):
     
     class Meta:
         model = Case
-        exclude = ['ID', 'CreatedAt', 'UpdatedAt', 'User']
+        exclude = ['ID', 'CreatedAt', 'UpdatedAt', 'User', 'VulnerabilityCategory', 'VulnerabilityScore']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

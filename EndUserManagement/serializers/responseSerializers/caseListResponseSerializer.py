@@ -5,4 +5,4 @@ from EndUserManagement.models import Case
 class CaseListResponseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Case
-        exclude = ['User', 'UpdatedAt']
+        exclude = ['User', 'UpdatedAt', 'VulnerabilityCategory', 'VulnerabilityScore']
