@@ -68,16 +68,17 @@ class MediaService:
         encryptionUserField = caseMedia.Case.User.EmailAddress
         return self.getMediaFileAsFileResponse(caseMedia, 'case', customCaseMediaException, encryptionUserField)
     
-    def getMediaFileAsFileResponse(self, mediaInstance, mediaType = 'case', exceptionClass = customCaseMediaException, encryptionUserField = 'default-user-field'):
+    def getFilePath(self, mediaInstance, mediaType):
         folderName = mediaInstance.ID.hex
         fileName = mediaInstance.MediaName
         if mediaType == 'case':
             mediaStoragePath = self.caseMediaStoragePath
         else:
             mediaStoragePath = self.messageMediaStoragePath
-        return os.path.join(self.coreAppDir, mediaStoragePath, folderName, fileName)
     
-    def getMediaFileAsFileResponse(self, mediaInstance, mediaType = 'case', exceptionClass = customCaseMediaException):
+        return os.path.join(self.coreAppDir, mediaStoragePath, folderName, fileName)
+
+    def getMediaFileAsFileResponse(self, mediaInstance, mediaType = 'case', exceptionClass = customCaseMediaException, encryptionUserField = 'default-user-field'):
         fileName = mediaInstance.MediaName
         fileDirectory = self.getFilePath(mediaInstance, mediaType)
         if not os.path.exists(fileDirectory):
