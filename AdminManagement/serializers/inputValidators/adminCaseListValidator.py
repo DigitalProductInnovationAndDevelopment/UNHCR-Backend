@@ -2,11 +2,13 @@ from rest_framework import serializers
 
 from EndUserManagement.models import Case
 
+from . import CustomModelSerializer
+
 def checkDateOrder(value):
     if value not in ["asc", "desc"]:
         raise serializers.ValidationError("The given date order is not valid!")
     
-class AdminCaseListValidator(serializers.ModelSerializer):
+class AdminCaseListValidator(CustomModelSerializer):
     CreatedAtOrder = serializers.CharField(validators = [checkDateOrder])
     UpdatedAtOrder = serializers.CharField(validators = [checkDateOrder])
     page = serializers.IntegerField(required = False)

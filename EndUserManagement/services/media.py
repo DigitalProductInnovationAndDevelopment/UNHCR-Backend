@@ -1,14 +1,16 @@
 import os
 import uuid
 
-from django.http import FileResponse
+from django.http import HttpResponse
 from django.core.files.uploadedfile import TemporaryUploadedFile, InMemoryUploadedFile
 
 from EndUserManagement.models import MessageMedia, CaseMedia
 from EndUserManagement.exceptions import customMessageMediaException, customCaseMediaException
-from UNHCR_Backend.services import TranslationService
+
+from UNHCR_Backend.services import TranslationService, EncryptionService
 
 translationService = TranslationService()
+encryptionService = EncryptionService()
 
 class MediaService:
     def __init__(self):
@@ -18,12 +20,14 @@ class MediaService:
 
     # SAVE METHODS
     def saveMessageMedia(self, file, message):
-        return self.saveMedia(file, MessageMedia, message, 'message')
+        encryptionUserField = message.Case.User.EmailAddress
+        return self.saveMedia(file, MessageMedia, message, 'message', encryptionUserField)
         
     def saveCaseMedia(self, file, case):
-        return self.saveMedia(file, CaseMedia, case, 'case')
+        encryptionUserField = case.User.EmailAddress
+        return self.saveMedia(file, CaseMedia, case, 'case', encryptionUserField)
         
-    def saveMedia(self, file, mediaObjClass, parentObj, mediaType = 'case'):
+    def saveMedia(self, file, mediaObjClass, parentObj, mediaType = 'case', encryptionUserField = 'default-user-field'):
         fileUuid = uuid.uuid4()
         fileUuidHex = fileUuid.hex
         fileName = file.name
@@ -40,27 +44,31 @@ class MediaService:
             mediaStoragePath = self.messageMediaStoragePath
             mediaObjCreateDict["Message"] = parentObj
         # Saving the file to the storage (For now, local storage)
-        self.saveMediaFileToStorage(file, mediaStoragePath, file.name, fileUuidHex)
+        self.saveMediaFileToStorage(file, mediaStoragePath, file.name, fileUuidHex, encryptionUserField)
         newMediaObj = mediaObjClass(**mediaObjCreateDict)
         newMediaObj.save()
         return newMediaObj.ID.hex, newMediaObj
         
-    def saveMediaFileToStorage(self, file, mediaStoragePath, fileName, uuid):
+    def saveMediaFileToStorage(self, file, mediaStoragePath, fileName, uuid, encryptionUserField = 'default-user-field'):
         saveDirectory = os.path.join(self.coreAppDir, mediaStoragePath, uuid)
         os.makedirs(saveDirectory, exist_ok=True)
         filePath = os.path.join(saveDirectory, fileName)
         with open(filePath, 'wb') as fileHandler:
             for chunk in file.chunks():
-                fileHandler.write(chunk)
+                # Encrypting the chunk of the file before saving
+                encryptedChunk = encryptionService.encryptData(encryptionUserField, chunk)
+                fileHandler.write(encryptedChunk)
 
     # GET METHODS
     def getMessageMediaFileAsFileResponse(self, messageMedia):
-        return self.getMediaFileAsFileResponse(messageMedia, 'message', customMessageMediaException)
+        encryptionUserField = messageMedia.Message.Case.User.EmailAddress
+        return self.getMediaFileAsFileResponse(messageMedia, 'message', customMessageMediaException, encryptionUserField)
     
     def getCaseMediaFileAsFileResponse(self, caseMedia):
-        return self.getMediaFileAsFileResponse(caseMedia, 'case', customCaseMediaException)
-
-    def getFilePath(self, mediaInstance, mediaType):
+        encryptionUserField = caseMedia.Case.User.EmailAddress
+        return self.getMediaFileAsFileResponse(caseMedia, 'case', customCaseMediaException, encryptionUserField)
+    
+    def getMediaFileAsFileResponse(self, mediaInstance, mediaType = 'case', exceptionClass = customCaseMediaException, encryptionUserField = 'default-user-field'):
         folderName = mediaInstance.ID.hex
         fileName = mediaInstance.MediaName
         if mediaType == 'case':
@@ -74,7 +82,11 @@ class MediaService:
         fileDirectory = self.getFilePath(mediaInstance, mediaType)
         if not os.path.exists(fileDirectory):
             raise customCaseMediaException(translationService.translate(f'{mediaType}.media.not.exist'))
+        fileData = None
+        with open(fileDirectory, 'rb') as file:
+            fileData = file.read()
+        decryptedFileData = encryptionService.decryptData(encryptionUserField, fileData)
         # content_type is octet-stream for now, but we can change it with messageMedia.MediaType
-        response = FileResponse(open(fileDirectory, 'rb'), content_type = 'application/octet-stream')
+        response = HttpResponse(decryptedFileData, content_type = 'application/octet-stream')
         response['Content-Disposition'] = f'attachment; filename="{fileName}"'
         return response

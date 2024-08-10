@@ -71,8 +71,8 @@ def signUpController(request, **kwargs):
         except Exception as e:
             logger.error(traceback.format_exc())
             return Response(
-                {"success": False, "message": str(e)},
-                status=status.HTTP_400_BAD_REQUEST,
+                {"success": False, "message": translationService.translate('general.exception.message')},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
     else:

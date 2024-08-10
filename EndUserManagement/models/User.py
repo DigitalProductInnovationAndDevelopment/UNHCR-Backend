@@ -1,4 +1,4 @@
-import datetime
+from datetime import date
 
 from django.db import models
 from django.contrib.auth.models import AbstractUser
@@ -37,3 +37,9 @@ class User(TimestampAbstractModel, AbstractUser):
 
     class Meta:
         db_table = 'User'
+
+    def calculateAge(self):
+        today = date.today()
+        birthDate = self.DateOfBirth
+        age = today.year - birthDate.year - ((today.month, today.day) < (birthDate.month, birthDate.day))
+        return age

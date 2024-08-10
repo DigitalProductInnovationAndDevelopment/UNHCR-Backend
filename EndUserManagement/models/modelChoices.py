@@ -2,35 +2,33 @@ from csv import reader
 import os
 
 caseTypeChoices = [
-    ("Child protection", "Child protection"), 
-    ("Women protection", "Women protection"),
-    ("Protection from violence", "Protection from violence"),
-    ("Protection from forced return", "Protection from forced return"),
-    ("Legal support", "Legal support"),
-    ("NFI support", "NFI support"),
-    ("Food assistance", "Food assistance"),
-    ("Cash assistance", "Cash assistance"),
-    ("Health support", "Health support"),
-    ("Psychological support", "Psychological support"),
-    ("Education support", "Education support"),
-    ("Shelter support", "Shelter support"),
+    ("Health", "Health"),
+    ("Education", "Education"),
+    ("Food Assistance", "Food Assistance"),
+    ("Cash Assistance", "Cash Assistance"),
+    ("Legal Support", "Legal Support"),
+    ("NFI Support", "NFI Support"),
+    ("Protection From Violence", "Protection From Violence"),
+    ("MHPSS", "MHPSS"),
+    ("Child Protection", "Child Protection"),
+    ("Detention/Deportation", "Detention/Deportation"),
     ("Other", "Other")
 ]
 
 psnTypeChoices = [
-    ("Pregnant woman", "Pregnant woman"),
-    ("Elderly people", "Elderly people"),
-    ("Persons with chronic diseases", "Persons with chronic diseases"),
-    ("Persons with disabilities", "Persons with disabilities"),
-    ("Unaccompanied and seperated children", "Unaccompanied and seperated children"),
-    ("Other", "Other")
+    ("Pregnant", "Pregnant"),
+    ("Elderly", "Elderly"),
+    ("Unaccompanied And/Or Seperated Children", "Unaccompanied And/Or Seperated Children"),
+    ("Chronic Disease", "Chronic Disease"),
+    ("Disability", "Disability"),
 ]
 
 caseStatusChoices = [
-    ("OPEN", "Open"),
-    ("VIEWED", "Viewed"),
-    ("CW ASSIGNED", "Case Worker Assigned"),
-    ("ON PROGRESS", "On Progress"),
+    ("REQUEST RECEIVED", "Request Received"),
+    ("REQUEST VIEWED", "Request Viewed"),
+    ("REQUEST REFERRED", "Request Referred"),
+    ("CASE WORKER ASSIGNED", "Case Worker Assigned"),
+    ("FIRST CONTACT SCHEDULED", "First Contact Scheduled"),
     ("CASE CLOSED", "Case Closed")
 ]
 
@@ -44,6 +42,20 @@ userGenderChoices = [
     ("FEMALE", "Female"),
     ("NON BINARY", "Non Binary"),
     ("OTHER", "Other")
+]
+
+vulnerabilityCategoryChoices = [
+    ("LOW RISK", "Low Risk"),
+    ("MODERATE RISK", "Moderate Risk"),
+    ("HIGH RISK", "High Risk"),
+]
+
+caseFeedbackRatingChoices = [
+    (1, 'One'),
+    (2, 'Two'),
+    (3, 'Three'),
+    (4, 'Four'),
+    (5, 'Five'),
 ]
 
 userCountryOfAsylumChoices = [

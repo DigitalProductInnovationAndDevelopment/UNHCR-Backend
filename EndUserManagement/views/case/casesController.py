@@ -116,8 +116,8 @@ def casesController(request, **kwargs):
         except Exception as e:
             logger.error(traceback.format_exc())
             return Response(
-                {"success": False, "message": str(e)},
-                status=status.HTTP_400_BAD_REQUEST,
+                {"success": False, "message": translationService.translate('general.exception.message')},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
     elif request.method == "POST":
@@ -151,13 +151,19 @@ def casesController(request, **kwargs):
             caseCreateDict = validatedData.copy()
             for key in ['CaseTypes', 'PsnTypes', 'File', 'VoiceRecording']: 
                 caseCreateDict.pop(key, None)
-            initialStatus = "OPEN"
+            initialStatus = "REQUEST RECEIVED"
             newCase = Case(User = user, Status = initialStatus, **caseCreateDict)
             newCase.save()
             if "CaseTypes" in validatedData:
                 newCase.CaseTypes.set(validatedData["CaseTypes"])
             if "PsnTypes" in validatedData:
                 newCase.PsnTypes.set(validatedData["PsnTypes"])
+            # Calculating and setting the vulnerability score for household cases
+            if newCase.Coverage == "HOUSEHOLD":
+                vulnerabilityScore, vulnerabilityCategory = caseService.calcCaseVulnerabilityScore(newCase)
+                newCase.VulnerabilityScore = vulnerabilityScore
+                newCase.VulnerabilityCategory = vulnerabilityCategory
+                newCase.save()
             # Returns empty list if there are no files submitted under the key 'File'
             filesList = validatedData["File"]
             voiceRecordingsList = validatedData["VoiceRecording"]
@@ -185,8 +191,8 @@ def casesController(request, **kwargs):
         except Exception as e:
             logger.error(traceback.format_exc())
             return Response(
-                {"success": False, "message": str(e)},
-                status=status.HTTP_400_BAD_REQUEST,
+                {"success": False, "message": translationService.translate('general.exception.message')},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
     else:

@@ -2,6 +2,8 @@ from rest_framework import serializers
 
 from EndUserManagement.models import Message
 
+from . import CustomModelSerializer
+
 class CustomFileListField(serializers.ListField):
     def __init__(self, **kwargs):
         # Allowing the file lists to be empty
@@ -14,7 +16,7 @@ class CustomVoiceRecordingListField(serializers.ListField):
         kwargs['allow_empty'] = kwargs.get('allow_empty', True)
         super().__init__(**kwargs)
 
-class MessageCreateValidator(serializers.ModelSerializer):
+class MessageCreateValidator(CustomModelSerializer):
     File = CustomFileListField(child = serializers.FileField())
     VoiceRecording = CustomVoiceRecordingListField(child = serializers.FileField())
     

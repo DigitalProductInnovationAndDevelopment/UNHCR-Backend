@@ -8,7 +8,8 @@ from rest_framework.response import Response
 from EndUserManagement.models import Case, Message
 from EndUserManagement.serializers.inputValidators import MessageCreateValidator
 from EndUserManagement.serializers.responseSerializers import MessageListResponseSerializer, MessageCreateResponseSerializer
-from EndUserManagement.services import MediaService, TranscriptionService
+from EndUserManagement.services import MediaService, TranscriptionService, MessageService
+
 from UNHCR_Backend.services import (
     PaginationService,
     TranslationService,
@@ -28,6 +29,7 @@ paginationService = PaginationService()
 translationService = TranslationService()
 mediaService = MediaService()
 transcriptionService = TranscriptionService()
+messageService = MessageService()
 
 # Create your views here.
 @api_view(["GET", "POST"])
@@ -72,8 +74,8 @@ def messagesController(request, id, **kwargs):
         except Exception as e:
             logger.error(traceback.format_exc())
             return Response(
-                {"success": False, "message": str(e)},
-                status=status.HTTP_400_BAD_REQUEST,
+                {"success": False, "message": translationService.translate('general.exception.message')},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
     elif request.method == "POST":
@@ -104,8 +106,10 @@ def messagesController(request, id, **kwargs):
             filesList = validatedData["File"]
             voiceRecordingsList = validatedData["VoiceRecording"]
             messageHasMedia = False
-            if filesList:
+            if filesList or voiceRecordingsList:
                 messageHasMedia = True
+            # Encrypt the text message before saving it to the DB
+            validatedData["TextMessage"] = messageService.encryptStringMessage(user.EmailAddress, validatedData["TextMessage"])
             newMessage = Message(Case = case,
                                  TextMessage = validatedData["TextMessage"],
                                  HasMedia = messageHasMedia,
@@ -135,8 +139,8 @@ def messagesController(request, id, **kwargs):
         except Exception as e:
             logger.error(traceback.format_exc())
             return Response(
-                {"success": False, "message": str(e)},
-                status = status.HTTP_400_BAD_REQUEST,
+                {"success": False, "message": translationService.translate('general.exception.message')},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
         
     else:
