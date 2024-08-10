@@ -21,14 +21,14 @@ translationService = TranslationService()
 mediaService = MediaService()
 
 @api_view(["GET", "DELETE"])
-def messageMediaTranscriptionDetailController(request, messageId, mediaId, messageMediaTranscriptionId, **kwargs):
+def messageMediaTranscriptionDetailController(request, messageId, mediaId, transcriptionId, **kwargs):
     # loggedUser detected in UNHCR_Backend.middlewares.authMiddleware
     user = kwargs["loggedUser"]
 
     try:
         message = Message.objects.get(ID=messageId)
         messageMedia = MessageMedia.objects.get(ID=mediaId)
-        messageMediaTranscription = MessageMediaTranscription.objects.get(ID=messageMediaTranscriptionId)
+        messageMediaTranscription = MessageMediaTranscription.objects.get(ID=transcriptionId)
 
         # Ensure the message media belongs to the user
         if user.ID != message.User.ID:

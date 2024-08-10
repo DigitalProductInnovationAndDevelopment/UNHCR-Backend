@@ -22,14 +22,14 @@ translationService = TranslationService()
 mediaService = MediaService()
 
 @api_view(["GET", "DELETE"])
-def caseMediaTranscriptionDetailController(request, caseId, mediaId, caseMediaTranscriptionId, **kwargs):
+def caseMediaTranscriptionDetailController(request, caseId, mediaId, transcriptionId, **kwargs):
     # loggedUser detected in UNHCR_Backend.middlewares.authMiddleware
     user = kwargs["loggedUser"]
 
     try:
         case = Case.objects.get(ID=caseId)
         caseMedia = CaseMedia.objects.get(ID=mediaId)
-        caseMediaTranscription = CaseMediaTranscription.objects.get(ID=caseMediaTranscriptionId)
+        caseMediaTranscription = CaseMediaTranscription.objects.get(ID=transcriptionId)
 
         # Ensure the case media belongs to the user
         if user.ID != case.User.ID:
