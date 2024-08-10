@@ -2,6 +2,7 @@ import traceback
 import logging
 
 from EndUserManagement.models import Message, MessageMedia, MessageMediaTranscription
+from EndUserManagement.serializers.responseSerializers import MessageMediaTranscriptionGetResponseSerializer
 from EndUserManagement.services import MediaService
 from UNHCR_Backend.services import (
     PaginationService,
@@ -63,9 +64,10 @@ def messageMediaTranscriptionDetailController(request, messageId, mediaId, trans
         @Endpoint: messages/:messageId/message-media/:mediaId/transcription/:transcriptionId
         """
         try:
+            responseSerializer = MessageMediaTranscriptionGetResponseSerializer(messageMediaTranscription)
             return Response(
-                {"success": True, "transcription": messageMediaTranscription.TranscriptionText, "language": messageMediaTranscription.Language},
-                status=status.HTTP_200_OK
+                {"success": True, "data": responseSerializer.data},
+                status=status.HTTP_200_OK,
             )
 
         except MessageMediaTranscription.DoesNotExist:

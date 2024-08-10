@@ -4,6 +4,7 @@ import logging
 from EndUserManagement.models import Case, CaseMedia, CaseMediaTranscription
 from EndUserManagement.services import MediaService, TranscriptionService
 from EndUserManagement.exceptions import customMessageMediaException
+from EndUserManagement.serializers.responseSerializers import CaseMediaTranscriptionGetResponseSerializer
 from UNHCR_Backend.services import (
     PaginationService,
     TranslationService,
@@ -64,9 +65,10 @@ def caseMediaTranscriptionDetailController(request, caseId, mediaId, transcripti
         @Endpoint: cases/:caseId/case-media/:mediaId/transcription/:transcriptionId
         """
         try:
+            responseSerializer = CaseMediaTranscriptionGetResponseSerializer(caseMediaTranscription)
             return Response(
-                {"success": True, "transcription": caseMediaTranscription.TranscriptionText, "language": caseMediaTranscription.Language},
-                status=status.HTTP_200_OK
+                {"success": True, "data": responseSerializer.data},
+                status=status.HTTP_200_OK,
             )
 
         except CaseMediaTranscription.DoesNotExist:
