@@ -1,6 +1,7 @@
 from django.urls import path
 from rest_framework.urlpatterns import format_suffix_patterns
 
+from .views.message import *
 from .views.user import *
 from .views.case import *
 from .views.userDevice import *
@@ -12,4 +13,5 @@ urlpatterns = [
     path("api/admin/cases/<int:id>", adminCaseDetailController, name="adminCaseDetail"),
     path("api/admin/user-devices", adminUserDevicesController, name="adminUserDevices"),
     path("api/admin/user-devices/<int:id>", adminUserDeviceDetailController, name="adminUserDevicesDetail"),
+    path("api/admin/<int:id>/messages", adminMessagesController, name="adminMessages"),
 ]
