@@ -10,6 +10,8 @@ from .views.messageMedia import *
 from .views.caseMedia import *
 from .views.feedback import *
 from .views.signup import *
+from .views.messageMediaTranscription import *
+from .views.caseMediaTranscription import *
 
 urlpatterns = [
     path("api/login", loginController, name="login"),
@@ -22,6 +24,8 @@ urlpatterns = [
     path("api/cases/<int:caseId>/case-media/<str:mediaId>", caseMediaDetailController, name="caseMediaDetail"),
     path("api/users", usersController, name="users"),
     path("api/users/<int:id>", userDetailController, name="userDetail"),
+    path("api/messages/<int:messageId>/message-media/<str:mediaId>/transcription/<str:transcriptionId>", messageMediaTranscriptionDetailController, name="messageMediaDetail"),
+    path("api/cases/<int:caseId>/case-media/<str:mediaId>/transcription/<str:transcriptionId>", caseMediaTranscriptionDetailController, name="caseMediaDetail"),
     path("api/user-devices", userDevicesController, name="userDevices"),
     path("api/user-devices/<int:id>", userDeviceDetailController, name="userDevicesDetail"),
 ]

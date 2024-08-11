@@ -1,5 +1,5 @@
 # base image (Slim images do not have mysql so 'mysql_config' error happens) (We can maybe fix that later)
-FROM python:3.10-alpine
+FROM python:3.9-alpine
 # setup environment variable
 # ENV DockerHOME = /usr/src/app
 
