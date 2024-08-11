@@ -7,7 +7,7 @@ from .Message import Message
 
 # The model for the case media of a case
 class MessageMedia(TimestampAbstractModel):
-    ID = models.UUIDField(primary_key=True, db_column = 'ID', default = uuid.uuid4, editable = False)
+    ID = models.UUIDField(primary_key = True, db_column = 'ID', default = uuid.uuid4, editable = False)
     Message = models.ForeignKey(Message, db_column = 'Message', on_delete = models.CASCADE)
     MediaType = models.TextField()
     MediaName = models.TextField()
