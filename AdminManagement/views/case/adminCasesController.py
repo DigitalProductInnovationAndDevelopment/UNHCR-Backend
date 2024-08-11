@@ -83,12 +83,12 @@ def adminCasesController(request, **kwargs):
                 else:
                     queryset = queryset.order_by('-UpdatedAt')
 
-                # Filter according to VulnerabilityScore
-                if "VulnerabilityScore" in validatedData:
-                    if validatedData["VulnerabilityScore"] == "asc":
-                        queryset = queryset.order_by('VulnerabilityScore')
-                    else:
-                        queryset = queryset.order_by('-VulnerabilityScore')
+            # Filter according to VulnerabilityScore
+            if "VulnerabilityScore" in validatedData:
+                if validatedData["VulnerabilityScore"] == "asc":
+                    queryset = queryset.order_by('VulnerabilityScore')
+                else:
+                    queryset = queryset.order_by('-VulnerabilityScore')
 
             cases = queryset.all()
             
