@@ -13,7 +13,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 
 from EndUserManagement.serializers.inputValidators import UserUpdateValidator
-from EndUserManagement.serializers.responseSerializers import UserGetResponseSerializer, UserUpdateResponseSerializer
+from EndUserManagement.serializers.responseSerializers import UserUpdateResponseSerializer
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
