@@ -32,6 +32,7 @@ class AuthMiddleware:
             "/api/login",
             "/api/logout",
             "/api/signup",
+            "/api/admin"
         ]
         # One-time configuration and initialization.
 
