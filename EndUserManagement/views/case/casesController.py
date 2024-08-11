@@ -171,7 +171,7 @@ def casesController(request, **kwargs):
             savedVoiceRecordingIds = []
             if filesList:
                 for file in filesList:
-                    fileId = mediaService.saveCaseMedia(file, newCase)
+                    fileId, caseMediaObj = mediaService.saveCaseMedia(file, newCase)
                     savedFileIds.append(fileId)
             if voiceRecordingsList:
                 for voiceRecording in voiceRecordingsList:
