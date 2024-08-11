@@ -116,11 +116,11 @@ def adminMessagesController(request, id, **kwargs):
             savedVoiceRecordingIds = []
             if filesList:
                 for file in filesList:
-                    fileId = mediaService.saveMessageMedia(file, newMessage)
+                    fileId, messageMediaObj = mediaService.saveMessageMedia(file, newMessage)
                     savedFileIds.append(fileId)
             if voiceRecordingsList:
                 for voiceRecording in voiceRecordingsList:
-                    voiceRecordingId = mediaService.saveMessageMedia(voiceRecording, newMessage)
+                    voiceRecordingId, newMediaObj = mediaService.saveMessageMedia(voiceRecording, newMessage)
                     translationService.translateMessageVoiceRecording(voiceRecording, newMessage)
                     savedVoiceRecordingIds.append(voiceRecordingId)  
             responseSerializer = AdminMessageCreateResponseSerializer(newMessage)

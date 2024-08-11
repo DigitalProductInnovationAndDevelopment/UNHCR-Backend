@@ -123,7 +123,7 @@ def messagesController(request, id, **kwargs):
             savedVoiceRecordingIds = []
             if filesList:
                 for file in filesList:
-                    fileId = mediaService.saveMessageMedia(file, newMessage)
+                    fileId, messageMediaObj = mediaService.saveMessageMedia(file, newMessage)
                     savedFileIds.append(fileId)
             if voiceRecordingsList:
                 for voiceRecording in voiceRecordingsList:
