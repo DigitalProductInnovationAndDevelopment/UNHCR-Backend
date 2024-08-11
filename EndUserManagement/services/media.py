@@ -77,6 +77,31 @@ class MediaService:
             mediaStoragePath = self.messageMediaStoragePath
     
         return os.path.join(self.coreAppDir, mediaStoragePath, folderName, fileName)
+    
+    def getDecryptedMedia(self, mediaInstance, mediaType, object):
+        if mediaType == 'case':
+            return self.getDecryptedCaseMedia(mediaInstance, mediaType, object)
+        else:
+            return self.getDecryptedMessageMedia(mediaInstance, mediaType, object)
+
+    def getDecryptedCaseMedia(self, mediaInstance, mediaType, case):
+        encryptionUserField = case.User.EmailAddress
+        fileDirectory = self.getFilePath(mediaInstance, mediaType)
+        return self.getDecryptedFile(encryptionUserField, fileDirectory)
+
+    def getDecryptedMessageMedia(self, mediaInstance, mediaType, message):
+        encryptionUserField = message.Case.User.EmailAddress   
+        fileDirectory = self.getFilePath(mediaInstance, mediaType)      
+        return self.getDecryptedFile(encryptionUserField, fileDirectory)
+
+    def getDecryptedFile(self, encryptionUserField, fileDirectory):
+        fileData = None
+        
+        with open(fileDirectory, 'rb') as file:
+            fileData = file.read()
+        
+        decryptedFileData = encryptionService.decryptData(encryptionUserField, fileData)
+        return decryptedFileData
 
     def getMediaFileAsFileResponse(self, mediaInstance, mediaType = 'case', exceptionClass = customCaseMediaException, encryptionUserField = 'default-user-field'):
         fileName = mediaInstance.MediaName

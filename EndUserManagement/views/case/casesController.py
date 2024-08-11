@@ -176,7 +176,7 @@ def casesController(request, **kwargs):
             if voiceRecordingsList:
                 for voiceRecording in voiceRecordingsList:
                     voiceRecordingId, newMediaObj = mediaService.saveCaseMedia(voiceRecording, newCase)
-                    transcriptionService.transcribeCaseMedia(newMediaObj)
+                    transcriptionService.transcribeCaseMedia(newMediaObj, newCase)
                     savedVoiceRecordingIds.append(voiceRecordingId)  
             responseSerializer = CaseCreateResponseSerializer(newCase)
             responseDict = responseSerializer.data.copy()

@@ -1,5 +1,7 @@
 import os
 import whisper
+import tempfile
+
 from EndUserManagement.models import MessageMedia, CaseMedia, CaseMediaTranscription, MessageMediaTranscription
 from EndUserManagement.services import MediaService
 
@@ -13,16 +15,26 @@ class TranscriptionService:
         self.coreAppDir = os.getcwd()
         self.model = whisper.load_model("base")
 
-    def speechToTextFromFile(self, media_instance, media_type):
-        audio_path = mediaService.getFilePath(media_instance, media_type)
+    def speechToTextFromFile(self, media_instance, media_type, object):
+        decrypted_audio = mediaService.getDecryptedMedia(media_instance, media_type, object)
 
-        result = self.model.transcribe(audio_path, fp16=False)
-        return result['text'], result['language']
+        # Create a temporary file with the .mp3 extension
+        with tempfile.NamedTemporaryFile(delete=False, suffix='.mp3') as temp_audio_file:
+            temp_audio_file.write(decrypted_audio)
+            temp_audio_file_path = temp_audio_file.name
 
-
-    def transcribeCaseMedia(self, case_media):
         try:
-            transcription_text, detected_language = self.speechToTextFromFile(case_media, "case")
+            # Load and transcribe the MP3 file using Whisper
+            audio = whisper.load_audio(temp_audio_file_path)
+            result = self.model.transcribe(audio, fp16=False)
+            return result['text'], result['language']
+        finally:
+            # Ensure the temporary file is deleted after processing
+            os.remove(temp_audio_file_path)
+
+    def transcribeCaseMedia(self, case_media, case):
+        try:
+            transcription_text, detected_language = self.speechToTextFromFile(case_media, "case", case)
 
             case_media_transcription = CaseMediaTranscription(
                 CaseMedia=case_media,
@@ -36,9 +48,9 @@ class TranscriptionService:
         except CaseMedia.DoesNotExist:
             return None
 
-    def transcribeMessageMedia(self, message_media):
+    def transcribeMessageMedia(self, message_media, message):
         try:
-            transcription_text, detected_language = self.speechToTextFromFile(message_media, "message")
+            transcription_text, detected_language = self.speechToTextFromFile(message_media, "message", message)
 
             message_media_transcription = MessageMediaTranscription(
                 MessageMedia=message_media,
