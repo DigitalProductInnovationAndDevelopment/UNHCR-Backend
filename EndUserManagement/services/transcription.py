@@ -16,15 +16,19 @@ class TranscriptionService:
         self.model = whisper.load_model("base")
 
     def speechToTextFromFile(self, media_instance, media_type, object):
-        decrypted_audio = mediaService.getDecryptedMedia(media_instance, media_type, object)
+        decryptedAudio, fileDirectory = mediaService.getDecryptedMedia(media_instance, media_type, object)
 
-        # Create a temporary file with the .mp3 extension
-        with tempfile.NamedTemporaryFile(delete=False, suffix='.mp3') as temp_audio_file:
-            temp_audio_file.write(decrypted_audio)
+        _, fileExtension = os.path.splitext(fileDirectory)
+        if not fileExtension:  # Default to .mp3 if no extension found
+            fileExtension = '.mp3'
+
+        # Create a temporary file
+        with tempfile.NamedTemporaryFile(delete=False, suffix=fileExtension) as temp_audio_file:
+            temp_audio_file.write(decryptedAudio)
             temp_audio_file_path = temp_audio_file.name
 
         try:
-            # Load and transcribe the MP3 file using Whisper
+            # Load and transcribe the file using Whisper
             audio = whisper.load_audio(temp_audio_file_path)
             result = self.model.transcribe(audio, fp16=False)
             return result['text'], result['language']

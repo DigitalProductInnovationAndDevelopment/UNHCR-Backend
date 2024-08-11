@@ -87,12 +87,12 @@ class MediaService:
     def getDecryptedCaseMedia(self, mediaInstance, mediaType, case):
         encryptionUserField = case.User.EmailAddress
         fileDirectory = self.getFilePath(mediaInstance, mediaType)
-        return self.getDecryptedFile(encryptionUserField, fileDirectory)
+        return self.getDecryptedFile(encryptionUserField, fileDirectory), fileDirectory
 
     def getDecryptedMessageMedia(self, mediaInstance, mediaType, message):
         encryptionUserField = message.Case.User.EmailAddress   
         fileDirectory = self.getFilePath(mediaInstance, mediaType)      
-        return self.getDecryptedFile(encryptionUserField, fileDirectory)
+        return self.getDecryptedFile(encryptionUserField, fileDirectory), fileDirectory
 
     def getDecryptedFile(self, encryptionUserField, fileDirectory):
         fileData = None
