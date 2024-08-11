@@ -28,7 +28,8 @@ class Case(TimestampAbstractModel):
     # PsnTypes is not required
     PsnTypes = models.ManyToManyField(PsnType, blank = True, related_name='PsnTypes')
     VulnerabilityScore = models.IntegerField(default = None, null = True)
-    VulnerabilityCategory = models.CharField(default = None, null = True, max_length = 20, choices = vulnerabilityCategoryChoices)
+    VulnerabilityCategory = models.CharField(max_length = 25, choices = vulnerabilityCategoryChoices)
+    UnreadMessageCount = models.IntegerField(default = 0, null = True)
 
     class Meta:
         db_table = 'Case'

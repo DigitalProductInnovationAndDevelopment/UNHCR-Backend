@@ -40,6 +40,8 @@ def adminCasesController(request, **kwargs):
         @QueryParam: CreatedAtOrder (String ("asc" OR "desc"), OPTIONAL)
         @QueryParam: UpdatedAtOrder (String ("asc" OR "desc"), OPTIONAL)
         @QueryParam: page (Int, OPTIONAL) (For pagination. If given as '2', second page of the results is fetched) 
+        @QueryParam: VulnerabilityScore (String ("asc" OR "desc"), OPTIONAL)
+       
         """
         try:
             queryParams = request.GET.dict()
@@ -80,6 +82,13 @@ def adminCasesController(request, **kwargs):
                     queryset = queryset.order_by('UpdatedAt')
                 else:
                     queryset = queryset.order_by('-UpdatedAt')
+
+            # Filter according to VulnerabilityScore
+            if "VulnerabilityScore" in validatedData:
+                if validatedData["VulnerabilityScore"] == "asc":
+                    queryset = queryset.order_by('VulnerabilityScore')
+                else:
+                    queryset = queryset.order_by('-VulnerabilityScore')
 
             cases = queryset.all()
             
