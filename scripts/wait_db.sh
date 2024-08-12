@@ -7,7 +7,6 @@ done
 
 python manage.py makemigrations
 python manage.py migrate
-python manage.py createDummyData
 
 # If DB is empty, open these commands to insert fixture data to DB
 echo "Inserting fixture data.."
@@ -19,4 +18,6 @@ echo "Inserting dummy data.."
 chmod +x scripts/create_dummy_data.sh
 ./scripts/create_dummy_data.sh
 
-python manage.py runserver 0.0.0.0:8000
+# Start the Django development server with debugpy enabled for debugging
+python -m debugpy --listen 0.0.0.0:3000 manage.py runserver 0.0.0.0:8000
+# python manage.py runserver 0.0.0.0:8000

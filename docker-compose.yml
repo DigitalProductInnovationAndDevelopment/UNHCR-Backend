@@ -19,8 +19,8 @@ services:
       dockerfile: Compose.Dockerfile
     env_file: .env
     restart: always
-    #volumes:
-    #  - .:/usr/src/app
+    volumes:
+      - .:/usr/src/app
     depends_on:
       - db
     working_dir: "/usr/src/app"
@@ -28,6 +28,7 @@ services:
       - 8000
     ports:
       - "8000:8000"
+      - "3000:3000"
 
 volumes:
   mysql_data:
