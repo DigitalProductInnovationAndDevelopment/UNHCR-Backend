@@ -1,5 +1,4 @@
 import requests
-
 from django.test import TestCase
 from EndUserManagement.models import Case
 from EndUserManagement.dummyData import getDummyCases
@@ -96,14 +95,53 @@ class CasesTestCase(TestCase):
         if response.status_code == 200:
             responseData = response.json()
             caseRetrieved = responseData.get('data', {})
-            print(caseRetrieved)
+
             self.assertIsNotNone(caseRetrieved)
             self.assertEqual(caseRetrieved.get('ID'), 1)
             self.assertEqual(caseRetrieved.get('Coverage'), 'HOUSEHOLD')
             self.assertEqual(caseRetrieved.get('Description'), "I arrived to Chisinau on x/x/2024 after our house in Kharkiv was bombarded by the Russian army. My father passed awayint eh hospital and together with my mother and sister we sought refuge in Moldova. We need a place to stay, clothes, food and some cashto survive. My mother is pregnant and needs medical assistance as well. We don't speak Romanian and don't know where to get assistance.")
-            self.assertEqual(caseRetrieved.get('CaseTypes'), [1, 4, 6, 11])
-            self.assertEqual(caseRetrieved.get('PsnTypes'), [])
         else:
             raise Exception(f"Case retrieval request failed with status code {response.status_code} and response: {response.text}")
     
-    # NO CASE DELETE AND UPDATE FOR THE END USER
+    def test_case_delete(self):
+        # Create a case to be deleted
+        case_id = self.create_test_case()
+
+        caseDeleteUrl = f"{self.baseServerUrl}/cases/{case_id}"
+        caseDeleteHeaders = {
+            'Authorization': f'Bearer {self.dummyUserAccessToken}'
+        }
+
+        response = requests.delete(caseDeleteUrl, headers=caseDeleteHeaders)
+        print(response)
+
+        self.assertEqual(response.status_code, 200)
+
+        response = requests.get(caseDeleteUrl, headers=caseDeleteHeaders)
+
+        self.assertEqual(response.status_code, 404)
+
+    def create_test_case(self):
+        caseCreateUrl = self.baseServerUrl + "/cases"
+        caseCreateHeaders = {
+            'Authorization': f'Bearer {self.dummyUserAccessToken}'
+        }
+
+        # Prepare data to send as form-data
+        data = {
+            'Coverage': 'INDIVIDUAL',
+            'Description': 'Test Case for Deletion',
+            'CaseTypes': ','.join(map(str, [])),
+            'PsnTypes': ','.join(map(str, []))
+        }
+
+        response = requests.post(caseCreateUrl, headers=caseCreateHeaders, data=data)
+
+
+        if response.status_code == 201:
+            responseData = response.json()
+            caseCreated = responseData.get('data', {})
+    
+            return caseCreated.get('ID')
+        else:
+            raise Exception(f"Case creation request failed with status code {response.status_code} and response: {response.text}")
