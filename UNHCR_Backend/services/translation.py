@@ -3,6 +3,7 @@ class TranslationService:
         self.translationMap = {
             "HTTP.method.invalid": {"en-us": "HTTP method is invalid."},
             "HTTP.not.authorized": {"en-us": "This operation is not authorized."},
+            "HTTP.auth.failed": {"en-us": "Authentication failed."},
             "case.create.successful": {"en-us": "The case has been successfully created."},
             "case.not.exist": {"en-us": "The case does not exist."},
             "case.update.successful": {"en-us": "The case has been successfully updated."},

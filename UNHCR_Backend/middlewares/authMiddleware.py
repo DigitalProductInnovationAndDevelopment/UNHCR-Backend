@@ -4,7 +4,7 @@ import logging
 from django.http import JsonResponse
 from rest_framework import status
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from rest_framework_simplejwt.exceptions import TokenError, InvalidToken
+from rest_framework_simplejwt.exceptions import TokenError, InvalidToken, AuthenticationFailed
 
 from UNHCR_Backend.services import TranslationService
 
@@ -72,6 +72,13 @@ class AuthMiddleware:
                     "message": str(e),
                 },
                 status=status.HTTP_400_BAD_REQUEST,
+            )
+        
+        except AuthenticationFailed:
+            logger.error(traceback.format_exc())
+            return JsonResponse(
+                {"success": False, "message": translationService.translate('HTTP.auth.failed')},
+                status=status.HTTP_401_UNAUTHORIZED,
             )
 
         except Exception:
