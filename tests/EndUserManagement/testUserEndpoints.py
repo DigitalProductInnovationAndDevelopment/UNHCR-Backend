@@ -61,10 +61,60 @@ class UsersTestCase(TestCase):
         # Comparing the expected and observed emails of the cases
         self.assertIsNotNone(userExpected, userObserved)
         self.assertEqual(userExpected["EmailAddress"], userObserved["EmailAddress"])
+        print("test user successfully fetched")
 
     def test_user_update(self):
-        """Animals that can speak are correctly identified"""
-        print("test_user_update")
+        #First fetch the related user with that token
+        getUserUrl = self.baseServerUrl + "/users"
+        getUserHeadersForFetch = {
+            'Authorization': f'Bearer {self.dummyUserAccessToken}'
+        }
+        responseForFetchedUser = requests.get(getUserUrl, headers=getUserHeadersForFetch)
+        userFetched = responseForFetchedUser['data']
+        userFetched = userFetched['ID']
+        print("fetched id " + userFetched)
+        #set url
+        patchUserUrl = self.baseServerUrl + "/users/" + userFetched  # Replace '1' with the actual user ID you want to update
+
+        # Set the headers, including the Authorization token
+        getUserHeaders = {
+            'Authorization': f'Bearer {self.dummyUserAccessToken}',  # Assume self.dummyUserAccessToken is defined
+            'Content-Type': 'application/json'
+        }
+
+        # Set the body parameters you want to update
+        update_data = { # Update fields as needed
+            "Surname": "NewSurname",
+            # Add more fields as necessary
+        }
+
+        # Send the PATCH request
+        response = requests.patch(patchUserUrl, headers=getUserHeaders, json=update_data)
+        responseData = None
+        # Check if the request was successful (status code 200)
+        if response.status_code == 200:
+            # Parse the JSON response
+            responseData = response.json()
+        else:
+            raise Exception("Get user request failed.")
+        # Check if response is not an empty list
+        userFetched = responseData['data']
+        self.assertNotEqual(userFetched, [])
+
+        #get Dummy Data
+        dummyUsers = getDummyUsers()
+
+        name_to_find = "Eduard"
+        userExpected = [user for user in dummyUsers if user["Name"] == name_to_find]
+        userExpected = userExpected[0]
+
+        userObserved = userFetched
+
+        # Comparing the expected and observed emails of the cases
+        self.assertIsNotNone(userExpected, userObserved)
+        self.assertNotEqual(userExpected["Surname"], userObserved["Surname"])
+        print("test update user successfully fetched")
+
 
     def test_user_delete(self):
         """Animals that can speak are correctly identified"""
