@@ -130,8 +130,7 @@ class CasesTestCase(TestCase):
         data = {
             'Coverage': 'INDIVIDUAL',
             'Description': 'Test Case for Deletion',
-            'CaseTypes': ','.join(map(str, [])),
-            'PsnTypes': ','.join(map(str, []))
+            'CaseTypes': ','.join(map(str, [1])),
         }
 
         response = requests.post(caseCreateUrl, headers=caseCreateHeaders, data=data)
