@@ -47,7 +47,7 @@ class CasesTestCase(TestCase):
         # Check if response is not an empty list
         casesList = responseData['data']
         self.assertNotEqual(casesList, [])
-        self.assertEqual(len(casesList), 1)
+        self.assertEqual(len(casesList), 2)
         dummyCases = getDummyCases()
         casesExpected = dummyCases["Eduard"]
         casesObserved = casesList
