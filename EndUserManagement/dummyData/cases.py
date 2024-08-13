@@ -57,6 +57,13 @@ dummyCases = {
                     ]
                 }
             ]
+        },
+        {
+            "Coverage": "INDIVIDUAL",
+            "Description": "I need psychological help about an issue. I would like to speak with a case worker in private.",
+            "Status": "REQUEST RECEIVED",
+            "CaseTypes": ["Health"],
+            "PsnTypes": []
         }
     ],
     "Dilshad": [
