@@ -70,7 +70,8 @@ class UsersTestCase(TestCase):
             'Authorization': f'Bearer {self.dummyUserAccessToken}'
         }
         responseForFetchedUser = requests.get(getUserUrl, headers=getUserHeadersForFetch)
-        userFetched = responseForFetchedUser['data']
+        responseData = responseForFetchedUser.json()
+        userFetched = responseData['data']
         userFetched = userFetched['ID']
         print("fetched id " + userFetched)
         #set url
@@ -96,7 +97,7 @@ class UsersTestCase(TestCase):
             # Parse the JSON response
             responseData = response.json()
         else:
-            raise Exception("Get user request failed.")
+            raise Exception("Patch user request failed.")
         # Check if response is not an empty list
         userFetched = responseData['data']
         self.assertNotEqual(userFetched, [])
