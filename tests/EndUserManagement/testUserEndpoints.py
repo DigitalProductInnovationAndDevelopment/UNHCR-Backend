@@ -61,7 +61,6 @@ class UsersTestCase(TestCase):
         # Comparing the expected and observed emails of the cases
         self.assertIsNotNone(userExpected, userObserved)
         self.assertEqual(userExpected["EmailAddress"], userObserved["EmailAddress"])
-        print("test user successfully fetched")
 
     def test_user_update(self):
         #First fetch the related user with that token
@@ -73,7 +72,6 @@ class UsersTestCase(TestCase):
         responseData = responseForFetchedUser.json()
         userFetched = responseData['data']
         userFetched = userFetched['ID']
-        print("fetched id " + str(userFetched))
         #set url
         patchUserUrl = self.baseServerUrl + "/users/" + str(userFetched)  # Replace '1' with the actual user ID you want to update
 
@@ -115,11 +113,5 @@ class UsersTestCase(TestCase):
         # Comparing the expected and observed emails of the cases
         self.assertIsNotNone(userExpected, userUpdated)
         self.assertNotEqual(userExpected["Surname"], userUpdated["Surname"])
-        print("test update user successfully fetched")
 
 
-    def test_user_delete(self):
-        """Animals that can speak are correctly identified"""
-        print("test_user_delete")
-    
-    # NO CASE DELETE AND UPDATE FOR THE END USER
