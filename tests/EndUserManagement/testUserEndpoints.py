@@ -98,6 +98,13 @@ class UsersTestCase(TestCase):
             responseData = response.json()
         else:
             raise Exception("Patch user request failed.")
+
+
+        responseForFetchedUserAfterUpdate = requests.get(getUserUrl, headers=getUserHeadersForFetch)
+        responseDataOfUpdated = responseForFetchedUserAfterUpdate.json()
+        userUpdated = responseDataOfUpdated['data']
+
+
         # Check if response is not an empty list
         userFetched = responseData['data']
         self.assertNotEqual(userFetched, [])
@@ -109,11 +116,10 @@ class UsersTestCase(TestCase):
         userExpected = [user for user in dummyUsers if user["Name"] == name_to_find]
         userExpected = userExpected[0]
 
-        userObserved = userFetched
 
         # Comparing the expected and observed emails of the cases
-        self.assertIsNotNone(userExpected, userObserved)
-        self.assertNotEqual(userExpected["Surname"], userObserved["Surname"])
+        self.assertIsNotNone(userExpected, userUpdated)
+        self.assertNotEqual(userExpected["Surname"], userUpdated["Surname"])
         print("test update user successfully fetched")
 
 
