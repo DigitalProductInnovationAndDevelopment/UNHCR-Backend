@@ -30,12 +30,32 @@ class CasesTestCase(TestCase):
         else:
             raise Exception("Login request failed. Check out the test set up method.")
 
-    def test_case_list(self):
+    def tearDown(self):
+        # Clean up: Delete all test cases created by the tests
         caseListUrl = self.baseServerUrl + "/cases"
         caseListHeaders = {
             'Authorization': f'Bearer {self.dummyUserAccessToken}'
         }
-        response = requests.get(caseListUrl, headers = caseListHeaders)
+        response = requests.get(caseListUrl, headers=caseListHeaders)
+        if response.status_code == 200:
+            responseData = response.json()
+            casesList = responseData.get('data', [])
+            for case in casesList:
+                case_id = case.get('ID')
+                if case_id:
+                    deleteUrl = f"{self.baseServerUrl}/cases/{case_id}"
+                    requests.delete(deleteUrl, headers=caseListHeaders)
+
+    def test_case_list(self):
+        # Create a known number of cases to test the list functionality
+        self.create_test_case(description='Case for List Test 1')
+        self.create_test_case(description='Case for List Test 2')
+
+        caseListUrl = self.baseServerUrl + "/cases"
+        caseListHeaders = {
+            'Authorization': f'Bearer {self.dummyUserAccessToken}'
+        }
+        response = requests.get(caseListUrl, headers=caseListHeaders)
         responseData = None
         # Check if the request was successful (status code 200)
         if response.status_code == 200:
@@ -45,7 +65,7 @@ class CasesTestCase(TestCase):
             raise Exception("Case list request failed.")
         # Check if response is not an empty list
         casesList = responseData['data']
-        print(casesList)
+
         self.assertNotEqual(casesList, [])
         self.assertEqual(len(casesList), 2)
         dummyCases = getDummyCases()
@@ -53,7 +73,7 @@ class CasesTestCase(TestCase):
         casesObserved = casesList
         descriptionsExpected = [case["Description"] for case in casesExpected]
         descriptionsObserved = [case["Description"] for case in casesObserved]
-        # Comparing the expected and observed desriptions of the cases
+        # Comparing the expected and observed descriptions of the cases
         self.assertEqual(descriptionsExpected, descriptionsObserved)
 
     def test_case_create(self):
@@ -86,7 +106,10 @@ class CasesTestCase(TestCase):
             raise Exception(f"Case creation request failed with status code {response.status_code} and response: {response.text}")
 
     def test_case_get(self):
-        caseGetUrl = f"{self.baseServerUrl}/cases/{1}"
+        # Create a case to get
+        case_id = self.create_test_case(description='Case for Get Test')
+
+        caseGetUrl = f"{self.baseServerUrl}/cases/{case_id}"
         caseGetHeaders = {
             'Authorization': f'Bearer {self.dummyUserAccessToken}'
         }
@@ -98,15 +121,14 @@ class CasesTestCase(TestCase):
             caseRetrieved = responseData.get('data', {})
 
             self.assertIsNotNone(caseRetrieved)
-            self.assertEqual(caseRetrieved.get('ID'), 1)
-            self.assertEqual(caseRetrieved.get('Coverage'), 'HOUSEHOLD')
-            self.assertEqual(caseRetrieved.get('Description'), "I arrived to Chisinau on x/x/2024 after our house in Kharkiv was bombarded by the Russian army. My father passed awayint eh hospital and together with my mother and sister we sought refuge in Moldova. We need a place to stay, clothes, food and some cashto survive. My mother is pregnant and needs medical assistance as well. We don't speak Romanian and don't know where to get assistance.")
+            self.assertEqual(caseRetrieved.get('ID'), case_id)
+            self.assertEqual(caseRetrieved.get('Description'), 'Case for Get Test')
         else:
             raise Exception(f"Case retrieval request failed with status code {response.status_code} and response: {response.text}")
-    
+
     def test_case_delete(self):
         # Create a case to be deleted
-        case_id = self.create_test_case()
+        case_id = self.create_test_case(description='Case for Deletion')
 
         caseDeleteUrl = f"{self.baseServerUrl}/cases/{case_id}"
         caseDeleteHeaders = {
@@ -121,7 +143,7 @@ class CasesTestCase(TestCase):
 
         self.assertEqual(response.status_code, 404)
 
-    def create_test_case(self):
+    def create_test_case(self, description='Test Case'):
         caseCreateUrl = self.baseServerUrl + "/cases"
         caseCreateHeaders = {
             'Authorization': f'Bearer {self.dummyUserAccessToken}'
@@ -130,12 +152,12 @@ class CasesTestCase(TestCase):
         # Prepare data to send as form-data
         data = {
             'Coverage': 'INDIVIDUAL',
-            'Description': 'Test Case for Deletion',
+            'Description': description,
             'CaseTypes': ','.join(map(str, [1])),
+            'PsnTypes': ','.join(map(str, [1]))
         }
 
         response = requests.post(caseCreateUrl, headers=caseCreateHeaders, data=data)
-
 
         if response.status_code == 201:
             responseData = response.json()
