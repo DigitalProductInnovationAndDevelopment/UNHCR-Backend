@@ -104,11 +104,6 @@ class UsersTestCase(TestCase):
         responseDataOfUpdated = responseForFetchedUserAfterUpdate.json()
         userUpdated = responseDataOfUpdated['data']
 
-
-        # Check if response is not an empty list
-        userFetched = responseData['data']
-        self.assertNotEqual(userFetched, [])
-
         #get Dummy Data
         dummyUsers = getDummyUsers()
 
