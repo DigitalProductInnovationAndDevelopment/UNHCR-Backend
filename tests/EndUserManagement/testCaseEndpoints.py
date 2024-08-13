@@ -45,6 +45,7 @@ class CasesTestCase(TestCase):
             raise Exception("Case list request failed.")
         # Check if response is not an empty list
         casesList = responseData['data']
+        print(casesList)
         self.assertNotEqual(casesList, [])
         self.assertEqual(len(casesList), 2)
         dummyCases = getDummyCases()
