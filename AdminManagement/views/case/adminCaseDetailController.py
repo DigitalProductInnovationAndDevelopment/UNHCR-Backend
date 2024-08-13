@@ -24,8 +24,6 @@ translationService = TranslationService()
 # Create your views here.
 @api_view(["GET", "PATCH", "DELETE"])
 def adminCaseDetailController(request, id, **kwargs):
-    # loggedUser detected in UNHCR_Backend.middlewares.authMiddleware
-    user = kwargs["loggedUser"]
     try:
         case = Case.objects.get(ID=id)
     except Case.DoesNotExist as err:

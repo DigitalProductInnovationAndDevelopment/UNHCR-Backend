@@ -27,9 +27,6 @@ translationService = TranslationService()
 # Create your views here.
 @api_view(["GET", "POST"])
 def adminCasesController(request, **kwargs):
-    # loggedUser detected in UNHCR_Backend.middlewares.authMiddleware
-    user = kwargs["loggedUser"]
-
     if request.method == "GET":
         """
         Lists all cases of the logged in user.
