@@ -160,3 +160,29 @@ class CasesTestCase(TestCase):
             return caseCreated.get('ID')
         else:
             raise Exception(f"Case creation request failed with status code {response.status_code} and response: {response.text}")
+
+
+    def test_case_update(self):
+        case_id = self.create_test_case(description='Original Case Description')
+
+        caseUpdateUrl = f"{self.baseServerUrl}/cases/{case_id}"
+        caseUpdateHeaders = {
+            'Authorization': f'Bearer {self.dummyUserAccessToken}',
+            'Content-Type': 'application/json'
+        }
+
+        updatedData = {
+            'Description': 'Updated Case Description',
+        }
+
+        response = requests.patch(caseUpdateUrl, headers=caseUpdateHeaders, json=updatedData)
+
+        if response.status_code == 200:
+            responseData = response.json()
+            caseUpdated = responseData.get('data', {})
+
+
+            self.assertIsNotNone(caseUpdated)
+            self.assertEqual(caseUpdated.get('Description'), updatedData['Description'])
+        else:
+            raise Exception(f"Case update request failed with status code {response.status_code} and response: {response.text}")
