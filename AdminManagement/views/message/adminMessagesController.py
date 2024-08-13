@@ -131,7 +131,7 @@ def adminMessagesController(request, id, **kwargs):
             # increase one unread message count every post request for app user perspective
             case.UnreadMessageCount = case.UnreadMessageCount + 1
             #change case status
-            newStatus= "CASE WORKER ASSIGNED"
+            newStatus= 'CASE WORKER ASSIGNED'
             case.Status = newStatus
             case.save()
 

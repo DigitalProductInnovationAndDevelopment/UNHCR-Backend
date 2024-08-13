@@ -30,6 +30,7 @@ class Case(TimestampAbstractModel):
     VulnerabilityScore = models.IntegerField(default = None, null = True)
     VulnerabilityCategory = models.CharField(max_length = 25, choices = vulnerabilityCategoryChoices)
     UnreadMessageCount = models.IntegerField(default = 0, null = True)
+    IsFeedbackNeeded = models.BooleanField(default = None, null = True)
 
     class Meta:
         db_table = 'Case'

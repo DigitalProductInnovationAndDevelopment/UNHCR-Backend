@@ -76,6 +76,11 @@ def adminCaseDetailController(request, id, **kwargs):
             validatedData = bodyParamsValidator.validated_data
             for attr, value in validatedData.items():
                 setattr(case, attr, value)
+            if 'Status' in bodyParams:
+                status_value = bodyParams['Status']
+                if status_value == 'CASE CLOSED' and case.IsFeedbackNeeded == None:
+                    case.IsFeedbackNeeded = True
+
             case.save()
             responseSerializer = AdminCaseUpdateReponseSerializer(case)
 

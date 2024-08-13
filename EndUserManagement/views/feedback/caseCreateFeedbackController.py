@@ -64,6 +64,8 @@ def caseCreateFeedbackController(request, id, **kwargs):
             newCaseCreateFeedback.save()
             responseSerializer = CaseCreateFeedbackCreateResponseSerializer(newCaseCreateFeedback)
 
+            case.IsFeedbackNeeded = False
+
             return Response(
                 {"success": True, "data": responseSerializer.data},
                 status=status.HTTP_201_CREATED,
