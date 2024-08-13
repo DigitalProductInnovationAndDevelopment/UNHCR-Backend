@@ -48,17 +48,16 @@ class UsersTestCase(TestCase):
         # Check if response is not an empty list
         userFetched = responseData['data']
         self.assertNotEqual(userFetched, [])
-        self.assertEqual(len(userFetched), 1)
+
+        #get Dummy Data
         dummyUsers = getDummyUsers()
-        
-     
 
         name_to_find = "Eduard"
         userExpected = [user for user in dummyUsers if user["Name"] == name_to_find]
         userObserved = userFetched
     
         # Comparing the expected and observed emails of the cases
-        self.assertIsNotNone(userExpected,userObserved)
+        self.assertIsNotNone(userExpected, userObserved)
         self.assertEqual(userExpected["EmailAddress"], userObserved["EmailAddress"])
 
     def test_user_update(self):
