@@ -26,18 +26,25 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
+    - name: Delete Existing SQLite Test DB
+      run: |
+        if [ -f db.sqlite3 ]; then rm db.sqlite3; fi
+
     - name: Run migrations
       run: |
         python manage.py makemigrations
         python manage.py migrate
+
     - name: Insert fixture data
       run: |
         chmod +x scripts/create_fixture_data.sh
         ./scripts/create_fixture_data.sh
+
     - name: Insert dummy data if DB is empty
       run: |
         chmod +x scripts/create_dummy_data.sh
         ./scripts/create_dummy_data.sh
+
     - name: Start Django server in the background
       run: |
         python manage.py runserver 0.0.0.0:8000 &
@@ -47,6 +54,7 @@ jobs:
     - name: Run tests
       run: |
         python manage.py test
+        
     - name: Stop Django server
       run: |
         kill $(lsof -t -i:8000) || echo "Server stopped"

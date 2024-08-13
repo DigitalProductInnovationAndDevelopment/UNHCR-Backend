@@ -59,6 +59,7 @@ class Command(BaseCommand):
                 dummyUser = User(**dummyUserInfo)
                 dummyUser.set_password(dummyPwd)
                 dummyUser.save()
+                print("User inserted")
                 dummyCasesOfUser = dummyCases[dummyUserInfo["Name"]] if dummyUserInfo["Name"] in dummyCases else None
                 if dummyCasesOfUser:
                     for dummyCaseInfo in dummyCasesOfUser:
@@ -70,14 +71,19 @@ class Command(BaseCommand):
                         dummyCase = Case(User = dummyUser, **caseCreateDict)
                         # We first need to save the model for attaching many to many fields
                         dummyCase.save()
+                        print("Case inserted")
                         # Attaching the case types
-                        chosenCaseTypes = CaseType.objects.filter(name__in = dummyCaseInfo["CaseTypes"])
-                        for chosenCaseType in chosenCaseTypes:
-                            dummyCase.CaseTypes.add(chosenCaseType)
+                        caseTypes = dummyCaseInfo["CaseTypes"] if "CaseTypes" in dummyCaseInfo else None
+                        if caseTypes:
+                            chosenCaseTypes = CaseType.objects.filter(name__in = caseTypes)
+                            for chosenCaseType in chosenCaseTypes:
+                                dummyCase.CaseTypes.add(chosenCaseType)
                         # Attaching the psn types
-                        chosenPsnTypes = PsnType.objects.filter(name__in = dummyCaseInfo["PsnTypes"])
-                        for chosenPsnType in chosenPsnTypes:
-                            dummyCase.PsnTypes.add(chosenPsnType)
+                        psnTypes = dummyCaseInfo["PsnTypes"] if "PsnTypes" in dummyCaseInfo else None
+                        if psnTypes:
+                            chosenPsnTypes = PsnType.objects.filter(name__in = dummyCaseInfo["PsnTypes"])
+                            for chosenPsnType in chosenPsnTypes:
+                                dummyCase.PsnTypes.add(chosenPsnType)
                         # Calculating and setting the vulnerability score for household cases
                         if dummyCase.Coverage == "HOUSEHOLD":
                             vulnerabilityScore, vulnerabilityCategory = caseService.calcCaseVulnerabilityScore(dummyCase)
