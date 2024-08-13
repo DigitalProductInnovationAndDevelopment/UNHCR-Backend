@@ -113,7 +113,6 @@ class CasesTestCase(TestCase):
         }
 
         response = requests.delete(caseDeleteUrl, headers=caseDeleteHeaders)
-        print(response)
 
         self.assertEqual(response.status_code, 200)
 
