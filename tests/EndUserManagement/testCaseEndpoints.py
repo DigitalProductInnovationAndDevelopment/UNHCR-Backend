@@ -48,9 +48,6 @@ class CasesTestCase(TestCase):
 
     def test_case_list(self):
         # Create a known number of cases to test the list functionality
-        self.create_test_case(description='Case for List Test 1')
-        self.create_test_case(description='Case for List Test 2')
-
         caseListUrl = self.baseServerUrl + "/cases"
         caseListHeaders = {
             'Authorization': f'Bearer {self.dummyUserAccessToken}'
