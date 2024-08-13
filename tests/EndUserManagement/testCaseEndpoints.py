@@ -96,13 +96,13 @@ class CasesTestCase(TestCase):
         if response.status_code == 200:
             responseData = response.json()
             caseRetrieved = responseData.get('data', {})
-
+            print(caseRetrieved)
             self.assertIsNotNone(caseRetrieved)
-            self.assertEqual(caseRetrieved.get('ID'), 1)  # Check case ID matches
+            self.assertEqual(caseRetrieved.get('ID'), 1)
             self.assertEqual(caseRetrieved.get('Coverage'), 'HOUSEHOLD')
             self.assertEqual(caseRetrieved.get('Description'), "I arrived to Chisinau on x/x/2024 after our house in Kharkiv was bombarded by the Russian army. My father passed awayint eh hospital and together with my mother and sister we sought refuge in Moldova. We need a place to stay, clothes, food and some cashto survive. My mother is pregnant and needs medical assistance as well. We don't speak Romanian and don't know where to get assistance.")
-            self.assertEqual(caseRetrieved.get('CaseTypes'), [])  # Adjust based on actual field format
-            self.assertEqual(caseRetrieved.get('PsnTypes'), [])  # Adjust based on actual field format
+            self.assertEqual(caseRetrieved.get('CaseTypes'), [1, 4, 6, 11])
+            self.assertEqual(caseRetrieved.get('PsnTypes'), [])
         else:
             raise Exception(f"Case retrieval request failed with status code {response.status_code} and response: {response.text}")
     
