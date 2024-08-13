@@ -72,18 +72,16 @@ class CasesTestCase(TestCase):
 
         # Send the POST request with form-data
         response = requests.post(caseCreateUrl, headers=caseCreateHeaders, data=data)
-        print(response)
-        print(response.text)
 
         if response.status_code == 201:
             responseData = response.json()
             caseCreated = responseData.get('data', {})
-            print(caseCreated)
+
             self.assertIsNotNone(caseCreated)
             self.assertEqual(caseCreated.get('Description'), data['Description'])
             self.assertEqual(caseCreated.get('Coverage'), data['Coverage'])
-            self.assertEqual(caseCreated.get('PsnTypes'), ['1'])
-            self.assertEqual(caseCreated.get('CaseTypes'), ['1'])
+            self.assertEqual(caseCreated.get('PsnTypes'), [1])
+            self.assertEqual(caseCreated.get('CaseTypes'), [1])
         else:
             raise Exception(f"Case creation request failed with status code {response.status_code} and response: {response.text}")
 
