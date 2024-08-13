@@ -5,7 +5,7 @@ from EndUserManagement.models import Case
 from EndUserManagement.dummyData import getDummyCases, getDummyUsers
 
 
-class CasesTestCase(TestCase):
+class UsersTestCase(TestCase):
     def setUp(self):
         # The host for the docker 
         self.baseServerUrl = "http://localhost:8000/api"
@@ -61,12 +61,12 @@ class CasesTestCase(TestCase):
         self.assertIsNotNone(userExpected,userObserved)
         self.assertEqual(userExpected["EmailAddress"], userObserved["EmailAddress"])
 
-    def test_case_create(self):
+    def test_user_update(self):
         """Animals that can speak are correctly identified"""
-        print("test_case_create")
+        print("test_user_update")
 
-    def test_case_get(self):
+    def test_user_delete(self):
         """Animals that can speak are correctly identified"""
-        print("test_case_get")
+        print("test_user_delete")
     
     # NO CASE DELETE AND UPDATE FOR THE END USER
