@@ -86,7 +86,24 @@ class CasesTestCase(TestCase):
             raise Exception(f"Case creation request failed with status code {response.status_code} and response: {response.text}")
 
     def test_case_get(self):
-        """Animals that can speak are correctly identified"""
-        print("test_case_get")
+        caseGetUrl = f"{self.baseServerUrl}/cases/{1}"
+        caseGetHeaders = {
+            'Authorization': f'Bearer {self.dummyUserAccessToken}'
+        }
+
+        response = requests.get(caseGetUrl, headers=caseGetHeaders)
+
+        if response.status_code == 200:
+            responseData = response.json()
+            caseRetrieved = responseData.get('data', {})
+
+            self.assertIsNotNone(caseRetrieved)
+            self.assertEqual(caseRetrieved.get('ID'), 1)  # Check case ID matches
+            self.assertEqual(caseRetrieved.get('Coverage'), 'HOUSEHOLD')
+            self.assertEqual(caseRetrieved.get('Description'), "I arrived to Chisinau on x/x/2024 after our house in Kharkiv was bombarded by the Russian army. My father passed awayint eh hospital and together with my mother and sister we sought refuge in Moldova. We need a place to stay, clothes, food and some cashto survive. My mother is pregnant and needs medical assistance as well. We don't speak Romanian and don't know where to get assistance.")
+            self.assertEqual(caseRetrieved.get('CaseTypes'), [])  # Adjust based on actual field format
+            self.assertEqual(caseRetrieved.get('PsnTypes'), [])  # Adjust based on actual field format
+        else:
+            raise Exception(f"Case retrieval request failed with status code {response.status_code} and response: {response.text}")
     
     # NO CASE DELETE AND UPDATE FOR THE END USER
