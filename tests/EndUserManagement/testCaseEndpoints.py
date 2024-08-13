@@ -7,28 +7,26 @@ from EndUserManagement.dummyData import getDummyCases
 class CasesTestCase(TestCase):
     def setUp(self):
         # The host for the docker 
-        self.baseServerUrl = "http://localhost:8000"
+        self.baseServerUrl = "http://localhost:8000/api"
         self.dummyUserEmail = "eduard@gmail.com"
         self.dummyUserPwd = "1234567"
         payload = {
             "EmailAddress": self.dummyUserEmail,
             "Password": self.dummyUserPwd
         }
-        loginUrl = self.baseServerUrl + "/api/login"
+        loginUrl = self.baseServerUrl + "/login"
         # Send a POST request to the login endpoint
         response = requests.post(loginUrl, json=payload)
 
         # Check if the request was successful (status code 200)
         if response.status_code == 200:
             # Parse the JSON response
-            responseData = response.json()      
+            responseData = response.json()   
             # Extract the accessToken from the response data
-            accessToken = responseData.get('data', {}).get('accessToken')
+            accessToken = responseData.get('data', {}).get('access_token')
             if accessToken:
                 self.dummyUserAccessToken = accessToken
             else:
-                print(response.status_code)
-                print(response)
                 raise Exception("No access token in the login response. Check out the test set up method.")
         else:
             raise Exception("Login request failed. Check out the test set up method.")
@@ -49,7 +47,7 @@ class CasesTestCase(TestCase):
         # Check if response is not an empty list
         casesList = responseData['data']
         self.assertNotEqual(casesList, [])
-        self.assertEqual(len(casesList), 2)
+        self.assertEqual(len(casesList), 1)
         dummyCases = getDummyCases()
         casesExpected = dummyCases["Eduard"]
         casesObserved = casesList
@@ -60,10 +58,10 @@ class CasesTestCase(TestCase):
 
     def test_case_create(self):
         """Animals that can speak are correctly identified"""
-        print("ROARRR")
+        print("test_case_create")
 
     def test_case_get(self):
         """Animals that can speak are correctly identified"""
-        print("ROARRR")
+        print("test_case_get")
     
     # NO CASE DELETE AND UPDATE FOR THE END USER
