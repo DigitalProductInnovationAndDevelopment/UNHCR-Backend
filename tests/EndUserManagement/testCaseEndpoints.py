@@ -57,8 +57,35 @@ class CasesTestCase(TestCase):
         self.assertEqual(descriptionsExpected, descriptionsObserved)
 
     def test_case_create(self):
-        """Animals that can speak are correctly identified"""
-        print("test_case_create")
+        caseCreateUrl = self.baseServerUrl + "/cases"
+        caseCreateHeaders = {
+            'Authorization': f'Bearer {self.dummyUserAccessToken}'
+        }
+
+        # Prepare data to send as form-data
+        data = {
+            'Coverage': 'INDIVIDUAL',
+            'Description': 'Test Description',
+            'CaseTypes': ','.join(map(str, [1])),
+            'PsnTypes': ','.join(map(str, [1]))
+        }
+
+        # Send the POST request with form-data
+        response = requests.post(caseCreateUrl, headers=caseCreateHeaders, data=data)
+        print(response)
+        print(response.text)
+
+        if response.status_code == 201:
+            responseData = response.json()
+            caseCreated = responseData.get('data', {})
+            print(caseCreated)
+            self.assertIsNotNone(caseCreated)
+            self.assertEqual(caseCreated.get('Description'), data['Description'])
+            self.assertEqual(caseCreated.get('Coverage'), data['Coverage'])
+            self.assertEqual(caseCreated.get('PsnTypes'), ['1'])
+            self.assertEqual(caseCreated.get('CaseTypes'), ['1'])
+        else:
+            raise Exception(f"Case creation request failed with status code {response.status_code} and response: {response.text}")
 
     def test_case_get(self):
         """Animals that can speak are correctly identified"""
