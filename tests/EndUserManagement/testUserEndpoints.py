@@ -54,6 +54,8 @@ class UsersTestCase(TestCase):
 
         name_to_find = "Eduard"
         userExpected = [user for user in dummyUsers if user["Name"] == name_to_find]
+        userExpected = userExpected[0]
+
         userObserved = userFetched
     
         # Comparing the expected and observed emails of the cases
