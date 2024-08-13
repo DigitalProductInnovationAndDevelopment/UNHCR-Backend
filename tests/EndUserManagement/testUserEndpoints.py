@@ -73,9 +73,9 @@ class UsersTestCase(TestCase):
         responseData = responseForFetchedUser.json()
         userFetched = responseData['data']
         userFetched = userFetched['ID']
-        print("fetched id " + userFetched)
+        print("fetched id " + str(userFetched))
         #set url
-        patchUserUrl = self.baseServerUrl + "/users/" + userFetched  # Replace '1' with the actual user ID you want to update
+        patchUserUrl = self.baseServerUrl + "/users/" + str(userFetched)  # Replace '1' with the actual user ID you want to update
 
         # Set the headers, including the Authorization token
         getUserHeaders = {
